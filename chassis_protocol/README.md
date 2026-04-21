@@ -57,6 +57,7 @@ robot platforms.
 | `0x10` | VELOCITY_CMD     | Host → MCU  |
 | `0x11` | LIGHT_CMD        | Host → MCU  |
 | `0x12` | EMERGENCY_STOP   | Host → MCU  |
+| `0x13` | WHEEL_CMD        | Host → MCU  |
 | `0x20` | CHASSIS_STATUS   | MCU → Host  |
 | `0x21` | ODOMETRY         | MCU → Host  |
 | `0x22` | BATTERY_INFO     | MCU → Host  |
@@ -157,6 +158,19 @@ All multi-byte integers are little-endian.
 |--------|----------|-------------------|
 | 0      | 2        | reason_len        |
 | 2      | reason_len | reason (UTF-8)  |
+
+### WHEEL_CMD (0x13) — 13 + 8×N bytes
+
+Per-wheel target angular velocity command. Host performs inverse kinematics; MCU only runs per-wheel PID loops.
+
+| Offset | Size   | Field                                               |
+|--------|--------|-----------------------------------------------------|
+| 0      | 4      | seq                                                 |
+| 4      | 8      | timestamp_us                                        |
+| 12     | 1      | n_wheels                                            |
+| 13     | 8×N    | wheel_rads[0..N-1] (rad/s, little-endian double)   |
+
+**Wheel order:** Differential → [0] left, [1] right. Mecanum → [0] FL, [1] FR, [2] RL, [3] RR.
 
 ### CHASSIS_STATUS (0x20) — variable
 

@@ -68,6 +68,7 @@
 | `0x10` | VELOCITY_CMD     | 上位机 → MCU |
 | `0x11` | LIGHT_CMD        | 上位机 → MCU |
 | `0x12` | EMERGENCY_STOP   | 上位机 → MCU |
+| `0x13` | WHEEL_CMD        | 上位机 → MCU |
 | `0x20` | CHASSIS_STATUS   | MCU → 上位机 |
 | `0x21` | ODOMETRY         | MCU → 上位机 |
 | `0x22` | BATTERY_INFO     | MCU → 上位机 |
