@@ -193,6 +193,19 @@ TEST(FrameCodecTest, LengthFieldCorrect) {
     EXPECT_EQ(len, 256u);
 }
 
+// ─── 11. Encode + decode roundtrip for WHEEL_CMD ─────────────────────────────
+TEST(FrameCodecTest, RoundtripWheelCmd) {
+    // Simulate a 4-wheel payload: seq(4)+ts(8)+n(1)+4*double(32) = 45 bytes
+    std::vector<uint8_t> payload(45, 0x00);
+    payload[12] = 4; // n_wheels = 4
+    const auto frame = FrameCodec::encode(CmdId::WHEEL_CMD, payload);
+    const auto result = FrameCodec::decode(frame.data(), frame.size());
+
+    ASSERT_TRUE(result.has_value());
+    EXPECT_EQ(result->cmdId(), CmdId::WHEEL_CMD);
+    EXPECT_EQ(result->payload, payload);
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

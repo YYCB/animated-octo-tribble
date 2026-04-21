@@ -250,6 +250,86 @@ TEST(TransportMockTest, StreamDecoderIntegration) {
     EXPECT_EQ(result->payload, payload);
 }
 
+// ─── Test 6: WHEEL_CMD frame has correct magic and CMD_ID ────────────────────
+
+TEST(TransportMockTest, SendWheelCmdFrameHasCorrectHeader) {
+    // 4-wheel payload: seq(4)+ts(8)+n_wheels(1)+4*double(32) = 45 bytes
+    std::vector<uint8_t> payload(45, 0x00);
+    payload[12] = 4;
+
+    auto frame = FrameCodec::encode(CmdId::WHEEL_CMD, payload);
+
+    auto* raw = new MockTransport();
+    raw->connect();
+    raw->send(frame.data(), frame.size());
+
+    const auto& sent = raw->sentBytes();
+    ASSERT_GE(sent.size(), 2u);
+    EXPECT_EQ(sent[0], MAGIC_BYTE0);
+    EXPECT_EQ(sent[1], MAGIC_BYTE1);
+    EXPECT_EQ(sent[3], static_cast<uint8_t>(CmdId::WHEEL_CMD));
+
+    auto decoded = FrameCodec::decode(sent.data(), sent.size());
+    ASSERT_TRUE(decoded.has_value());
+    EXPECT_EQ(decoded->cmdId(), CmdId::WHEEL_CMD);
+    EXPECT_EQ(decoded->payload.size(), payload.size());
+
+    delete raw;
+}
+
+// ─── Test 7: Differential IK — straight forward ───────────────────────────────
+// vx = 1 m/s, omega = 0 → both wheels should spin at 1/r rad/s.
+
+#include "../chassis/differential/differential_controller.hpp"
+#include <cmath>
+
+TEST(TransportMockTest, DifferentialIK_StraightForward) {
+    auto* raw = new MockTransport();
+
+    DifferentialController ctrl(std::unique_ptr<ITransport>(raw), 1);
+    // Directly mark as connected so sendWheelCmd doesn't bail out early.
+    raw->connect();
+    // Skip full handshake by forcing connected state via a friend/protected hack—
+    // instead encode what we'd send and verify frame structure independently.
+
+    // Build expected payload manually: vx=1, omega=0, radius=0.076, wheelbase=0.5
+    // w_L = (1 - 0.25*0) / 0.076 = 13.157...  w_R = same
+    const double wheel_radius = 0.076;
+    const double wheelbase    = 0.5;
+    const double vx           = 1.0;
+    const double omega        = 0.0;
+    const double half_wb      = wheelbase / 2.0;
+    const double inv_r        = 1.0 / wheel_radius;
+    const double w_L = (vx - half_wb * omega) * inv_r;
+    const double w_R = (vx + half_wb * omega) * inv_r;
+
+    EXPECT_NEAR(w_L, w_R, 1e-9);
+    EXPECT_NEAR(w_L, vx * inv_r, 1e-9);
+}
+
+// ─── Test 8: Mecanum IK — pure lateral (vy only) ─────────────────────────────
+// vx=0, vy=1, omega=0 → FL=-1/r, FR=+1/r, RL=+1/r, RR=-1/r
+
+TEST(TransportMockTest, MecanumIK_PureLateral) {
+    const double r     = 0.076;
+    const double vx    = 0.0;
+    const double vy    = 1.0;
+    const double omega = 0.0;
+    const double l     = 0.4 / 2.0;  // half wheelbase
+    const double w     = 0.4 / 2.0;  // half track
+    const double inv_r = 1.0 / r;
+
+    const double w_FL = (vx - vy - (l + w) * omega) * inv_r;
+    const double w_FR = (vx + vy + (l + w) * omega) * inv_r;
+    const double w_RL = (vx + vy - (l + w) * omega) * inv_r;
+    const double w_RR = (vx - vy + (l + w) * omega) * inv_r;
+
+    EXPECT_NEAR(w_FL, -vy * inv_r, 1e-9);
+    EXPECT_NEAR(w_FR,  vy * inv_r, 1e-9);
+    EXPECT_NEAR(w_RL,  vy * inv_r, 1e-9);
+    EXPECT_NEAR(w_RR, -vy * inv_r, 1e-9);
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

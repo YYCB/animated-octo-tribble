@@ -29,6 +29,15 @@ message VelocityCmd {
   uint64 timestamp_us = 4;
 }
 
+// Per-wheel velocity command (host performs inverse kinematics).
+// wheel_rads contains one element per wheel (rad/s).
+// Wheel order: Differential → [left, right]; Mecanum → [FL, FR, RL, RR].
+message WheelCmd {
+  uint32 seq = 1;
+  uint64 timestamp_us = 2;
+  repeated double wheel_rads = 3;
+}
+
 message LightCmd {
   LightMode mode = 1;
   uint32 r = 2;
@@ -81,6 +90,7 @@ message ChassisCommand {
     VelocityCmd velocity = 3;
     LightCmd light = 4;
     EmergencyStop stop = 5;
+    WheelCmd wheel = 6;
   }
 }
 

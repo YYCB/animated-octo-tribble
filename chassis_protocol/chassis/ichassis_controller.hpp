@@ -11,6 +11,11 @@ namespace chassis {
 enum class ChassisType { DIFFERENTIAL, MECANUM, OMNI, UNKNOWN };
 enum class LightMode { OFF, SOLID, BLINK, BREATH };
 
+// Selects which command frame sendVelocity() emits.
+//   BODY_VELOCITY  → VELOCITY_CMD (0x10): send (vx, vy, omega); MCU decomposes to wheels.
+//   WHEEL_RPM      → WHEEL_CMD   (0x13): host decomposes to per-wheel rad/s; MCU only runs PID.
+enum class ControlMode { BODY_VELOCITY, WHEEL_RPM };
+
 struct ChassisInfo {
     std::string  vendor;
     std::string  model;
@@ -51,6 +56,14 @@ public:
     virtual bool sendVelocity(double vx, double vy, double omega) = 0;
     virtual bool sendLightCmd(LightMode mode, uint8_t r, uint8_t g, uint8_t b, double blink_hz) = 0;
     virtual bool emergencyStop(const std::string& reason) = 0;
+
+    // Send per-wheel target velocities (rad/s).
+    // wheel_rpms_rads must contain exactly as many elements as the chassis has wheels.
+    // Wheel order is controller-specific (e.g. Mecanum: FL, FR, RL, RR; Diff: L, R).
+    virtual bool sendWheelCmd(const std::vector<double>& wheel_rpms_rads) {
+        (void)wheel_rpms_rads;
+        return false;
+    }
 
     virtual ChassisStatus  getStatus()      const = 0;
     virtual ChassisInfo    getInfo()        const = 0;

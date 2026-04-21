@@ -29,6 +29,7 @@ public:
     bool sendVelocity(double vx, double vy, double omega) override;
     bool sendLightCmd(LightMode mode, uint8_t r, uint8_t g, uint8_t b, double blink_hz) override;
     bool emergencyStop(const std::string& reason) override;
+    bool sendWheelCmd(const std::vector<double>& wheel_rpms_rads) override;
     ChassisStatus  getStatus()      const override;
     ChassisInfo    getInfo()        const override;
     OdometryData   getOdometry()    const override;
@@ -73,6 +74,7 @@ protected:
     std::vector<uint8_t> buildVelocityPayload(double vx, double vy, double omega);
     std::vector<uint8_t> buildLightPayload(LightMode mode, uint8_t r, uint8_t g, uint8_t b, double hz);
     std::vector<uint8_t> buildStopPayload(const std::string& reason);
+    std::vector<uint8_t> buildWheelPayload(const std::vector<double>& wheel_rpms_rads);
     uint32_t             nextSeq();
 };
 

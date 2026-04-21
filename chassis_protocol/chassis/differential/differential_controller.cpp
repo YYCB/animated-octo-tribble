@@ -13,7 +13,24 @@ bool DifferentialController::sendVelocity(double vx, double vy, double omega) {
     vy = 0.0;
     vx    = std::max(-max_linear_vel_,  std::min(max_linear_vel_,  vx));
     omega = std::max(-max_angular_vel_, std::min(max_angular_vel_, omega));
+
+    if (mode_ == ControlMode::WHEEL_RPM) {
+        // Inverse kinematics: convert body velocity to per-wheel angular velocity (rad/s).
+        // Wheel order: [0] left, [1] right.
+        const double half_wb = wheelbase_ / 2.0;
+        const double inv_r   = 1.0 / wheel_radius_;
+        const std::vector<double> wheels = {
+            (vx - half_wb * omega) * inv_r,   // left
+            (vx + half_wb * omega) * inv_r,   // right
+        };
+        return ChassisHal::sendWheelCmd(wheels);
+    }
+
     return ChassisHal::sendVelocity(vx, vy, omega);
+}
+
+bool DifferentialController::sendWheelCmd(const std::vector<double>& wheel_rpms_rads) {
+    return ChassisHal::sendWheelCmd(wheel_rpms_rads);
 }
 
 ChassisInfo DifferentialController::getInfo() const {
@@ -24,16 +41,10 @@ ChassisInfo DifferentialController::getInfo() const {
     return info;
 }
 
-void DifferentialController::setWheelbase(double meters) {
-    wheelbase_ = meters;
-}
-
-void DifferentialController::setMaxLinearVel(double mps) {
-    max_linear_vel_ = mps;
-}
-
-void DifferentialController::setMaxAngularVel(double rps) {
-    max_angular_vel_ = rps;
-}
+void DifferentialController::setControlMode(ControlMode mode) { mode_           = mode; }
+void DifferentialController::setWheelbase(double meters)      { wheelbase_      = meters; }
+void DifferentialController::setWheelRadius(double meters)    { wheel_radius_   = meters; }
+void DifferentialController::setMaxLinearVel(double mps)      { max_linear_vel_ = mps; }
+void DifferentialController::setMaxAngularVel(double rps)     { max_angular_vel_ = rps; }
 
 } // namespace chassis

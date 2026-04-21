@@ -208,7 +208,22 @@ std::vector<uint8_t> ChassisHal::buildStopPayload(const std::string& reason) {
     return buf;
 }
 
-// ─── IChassisController implementation ───────────────────────────────────────
+std::vector<uint8_t> ChassisHal::buildWheelPayload(const std::vector<double>& wheel_rpms_rads) {
+    // seq(4) + timestamp_us(8) + n_wheels(1) + wheel_i_rads(8*N)
+    const auto n = static_cast<uint8_t>(
+        wheel_rpms_rads.size() < 255u ? wheel_rpms_rads.size() : 255u);
+    std::vector<uint8_t> buf;
+    buf.reserve(4 + 8 + 1 + 8 * n);
+    appendU32LE(buf, nextSeq());
+    appendU64LE(buf, nowUs());
+    appendU8(buf, n);
+    for (uint8_t i = 0; i < n; ++i) {
+        appendDouble(buf, wheel_rpms_rads[i]);
+    }
+    return buf;
+}
+
+
 
 bool ChassisHal::sendVelocity(double vx, double vy, double omega) {
     if (!connected_.load()) return false;
@@ -228,6 +243,13 @@ bool ChassisHal::emergencyStop(const std::string& reason) {
     if (!connected_.load()) return false;
     auto payload = buildStopPayload(reason);
     auto frame   = FrameCodec::encode(CmdId::EMERGENCY_STOP, payload);
+    return transport_->send(frame.data(), frame.size());
+}
+
+bool ChassisHal::sendWheelCmd(const std::vector<double>& wheel_rpms_rads) {
+    if (!connected_.load()) return false;
+    auto payload = buildWheelPayload(wheel_rpms_rads);
+    auto frame   = FrameCodec::encode(CmdId::WHEEL_CMD, payload);
     return transport_->send(frame.data(), frame.size());
 }
 

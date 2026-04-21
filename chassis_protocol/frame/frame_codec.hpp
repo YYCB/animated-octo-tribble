@@ -44,9 +44,10 @@ static constexpr std::size_t TRAILER_SIZE = 2; // CRC16
 enum class CmdId : uint8_t {
     HANDSHAKE_REQ   = 0x01,
     HANDSHAKE_RESP  = 0x02,
-    VELOCITY_CMD    = 0x10,
+    VELOCITY_CMD    = 0x10,  // body-frame velocity → MCU does inverse kinematics
     LIGHT_CMD       = 0x11,
     EMERGENCY_STOP  = 0x12,
+    WHEEL_CMD       = 0x13,  // per-wheel velocity (rad/s) → host did inverse kinematics
     CHASSIS_STATUS  = 0x20,
     ODOMETRY        = 0x21,
     BATTERY_INFO    = 0x22,
