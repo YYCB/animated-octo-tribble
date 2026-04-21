@@ -122,8 +122,8 @@ void VersionNegotiator::handleHandshakeResp(const DecodedFrame& frame) {
         chassis_type_       = chassis_type;
         state_              = State::CONNECTED;
     } else {
-        state_ = State::FAILED;
-        (void)reject_reason; // logged by caller if needed
+        reject_reason_ = reject_reason;
+        state_         = State::FAILED;
     }
 }
 
@@ -137,6 +137,10 @@ uint32_t VersionNegotiator::getNegotiatedVersion() const {
 
 std::string VersionNegotiator::getChassisType() const {
     return chassis_type_;
+}
+
+std::string VersionNegotiator::getRejectReason() const {
+    return reject_reason_;
 }
 
 VersionNegotiator::State VersionNegotiator::getState() const {

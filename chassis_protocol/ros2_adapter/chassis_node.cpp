@@ -44,8 +44,6 @@ ChassisNode::ChassisNode(rclcpp::Node::SharedPtr node)
     }
 
     // Reconnect timer
-    const auto interval_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(
-        std::chrono::duration<double>(reconnect_interval_s_));
     reconnect_timer_ = node_->create_wall_timer(
         std::chrono::duration_cast<std::chrono::nanoseconds>(
             std::chrono::duration<double>(reconnect_interval_s_)),
@@ -57,7 +55,7 @@ ChassisNode::ChassisNode(rclcpp::Node::SharedPtr node)
                 hal->connect();
             }
         });
-    (void)interval_ns;
+    (void)reconnect_timer_; // suppress unused warning
 }
 
 ChassisNode::~ChassisNode() {

@@ -24,6 +24,7 @@ public:
     bool        isNegotiated()        const;
     uint32_t    getNegotiatedVersion() const;
     std::string getChassisType()       const;
+    std::string getRejectReason()      const;
     State       getState()             const;
 
     // Call periodically. Returns true if timed-out & max retries exceeded.
@@ -37,6 +38,7 @@ private:
     State        state_{State::IDLE};
     uint32_t     negotiated_version_{0};
     std::string  chassis_type_;
+    std::string  reject_reason_;
 
     int retries_{0};
     static constexpr int    MAX_RETRIES     = 3;

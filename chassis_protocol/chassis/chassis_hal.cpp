@@ -308,7 +308,9 @@ void ChassisHal::dispatchStatusFrame(const DecodedFrame& frame) {
     std::size_t off = 0;
 
     ChassisStatus st;
-    /*uint32_t seq =*/ readU32LE(p, off);
+    const uint32_t seq = readU32LE(p, off);
+    // Sequence numbers enable future out-of-order / drop detection
+    (void)seq;
     st.timestamp_us = readU64LE(p, off);
     st.error_code   = readU32LE(p, off);
     const uint16_t msg_len = readU16LE(p, off);
@@ -316,7 +318,7 @@ void ChassisHal::dispatchStatusFrame(const DecodedFrame& frame) {
         st.error_msg.assign(reinterpret_cast<const char*>(p.data() + off), msg_len);
         off += msg_len;
     }
-    st.is_estop = (st.error_code != 0);
+    st.is_estop = (st.error_code & 0x8000U) != 0; // bit 15 set = emergency stop active
 
     {
         std::lock_guard<std::mutex> lk(status_mutex_);
@@ -338,7 +340,9 @@ void ChassisHal::dispatchOdometryFrame(const DecodedFrame& frame) {
     std::size_t off = 0;
 
     OdometryData od;
-    /*uint32_t seq =*/ readU32LE(p, off);
+    const uint32_t seq = readU32LE(p, off);
+    // Sequence numbers enable future out-of-order / drop detection
+    (void)seq;
     od.timestamp_us = readU64LE(p, off);
     od.x     = readDouble(p, off);
     od.y     = readDouble(p, off);

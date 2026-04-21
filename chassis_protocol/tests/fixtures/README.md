@@ -47,6 +47,12 @@ A `SessionRecorder` utility class (not yet implemented) may be added to
 #include <vector>
 #include "../frame/frame_codec.hpp"
 
+// CMakeLists.txt: target_compile_definitions(my_test PRIVATE
+//   FIXTURE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/fixtures")
+#ifndef FIXTURE_DIR
+#define FIXTURE_DIR "tests/fixtures"
+#endif
+
 std::vector<std::vector<uint8_t>> loadFrameFixture(const std::string& path) {
     std::ifstream f(path, std::ios::binary);
     std::vector<std::vector<uint8_t>> frames;
