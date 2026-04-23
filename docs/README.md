@@ -28,12 +28,11 @@ docs/
 │   ├── realsense-ros-4.57.7-analysis/
 │   └── hal_comparative_analysis/
 │
-├── ros2-roadmaps/             # 长篇路线图、专题与跨模块综述
-│   └── ros2_custom_fork_roadmap/
-│
-└── projects/                  # 具体项目的设计文档与笔记
-    └── chassis_protocol/
+└── ros2-roadmaps/             # 长篇路线图、专题与跨模块综述
+    └── ros2_custom_fork_roadmap/
 ```
+
+> 注：仓库中的代码项目（如根目录下的 `chassis_protocol/`）将各自的设计文档放在自己仓内的 `docs/` 目录中（例如 `chassis_protocol/docs/design/`），不集中收纳到 `docs/` 下，以便与代码同步演进。
 
 ## 分类约定
 
@@ -42,7 +41,7 @@ docs/
 | `ros2-core/` | 针对 ROS 2 上游某个模块（rclcpp、rcl、rmw、tf2、launch 等）的源码 / 机制 / 协议层调研 |
 | `ros2-ecosystem/` | 第三方基于 ROS 2 的 SDK、驱动、工具链的源码分析与对比 |
 | `ros2-roadmaps/` | 跨模块的路线图、性能优化专题、长期演进规划 |
-| `projects/` | 个人 / 团队具体项目的设计文档、架构说明、变更记录 |
+| 代码项目自带 `docs/` | 仓库中各代码项目（如 `chassis_protocol/`）的设计文档放在项目自身的 `docs/` 目录下，与代码一同维护 |
 
 未来若出现非 ROS 2 主题（例如 Linux 内核、AI 框架等），可在 `docs/` 下新增同级分类目录（如 `linux/`、`ai/`），保持一级目录即"领域"，二级目录即"具体调研主题"的结构。
 
