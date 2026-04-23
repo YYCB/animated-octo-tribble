@@ -11,6 +11,10 @@
 | [03_receive_path.md](./03_receive_path.md) | 接收路径：DDS DataReader → rmw take → rcl take → 用户回调 |
 | [04_serialization.md](./04_serialization.md) | CDR 序列化、rosidl 类型支持、IDL 编译生成代码 |
 | [05_summary.md](./05_summary.md) | 完整时序图、性能瓶颈、零拷贝路径对比 |
+| [06_intra_process.md](./06_intra_process.md) | **IPC 深度剖析**：IntraProcessManager、6 大前置条件、陷阱 |
+| [07_loaned_messages.md](./07_loaned_messages.md) | **Loaned Message 机制**：跨进程零拷贝、IDL 约束、适配策略 |
+| [08_rtps_wire_protocol.md](./08_rtps_wire_protocol.md) | **RTPS 线协议**：DATA/HEARTBEAT/ACKNACK/GAP/DATA_FRAG、可靠性状态机 |
+| [09_shm_transport.md](./09_shm_transport.md) | **SHM 传输**：FastDDS SHM / Iceoryx / 自研 SHM 对比与实测 |
 
 ## 最重要的结论
 
