@@ -215,5 +215,5 @@ void cb(std::unique_ptr<MsgT> msg) {
 - 长驻 shared_ptr 订阅是大消息场景的隐性内存坑。
 
 相关章节：
-- [05 phase3_rmw_zero_copy](../ros2_custom_fork_roadmap/05_phase3_rmw_zero_copy.md) - 跨进程零拷贝的 Loaned 方案；
+- [05 phase3_rmw_zero_copy](../../ros2-roadmaps/ros2_custom_fork_roadmap/05_phase3_rmw_zero_copy.md) - 跨进程零拷贝的 Loaned 方案；
 - [07 loaned_messages.md](./07_loaned_messages.md) - Loaned Message 对比 IPC。

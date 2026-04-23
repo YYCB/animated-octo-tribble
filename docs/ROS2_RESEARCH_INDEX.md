@@ -4,19 +4,19 @@
 
 | 目录 | 主题 | 文档数 | 核心内容 |
 |------|------|--------|---------|
-| [ros2_component_research](./ros2_component_research/) | Component 机制 | 5 | rclcpp_components、动态加载、ComponentContainer |
-| [ros2_service_discovery_research](./ros2_service_discovery_research/) | 服务发现 | 5 | SPDP/SEDP、RTPS、参与者发现 |
-| [ros2_rcl_research](./ros2_rcl_research/) | rcl C 客户端库 | 6 | 底层 C API、wait_set、rcl_init |
-| [ros2_rclcpp_core_research](./ros2_rclcpp_core_research/) | rclcpp 核心 | 6 | Node/Publisher/Subscription/Executor |
-| [ros2_topic_communication_research](./ros2_topic_communication_research/) | Topic 通信链路（含 IPC / Loaned / RTPS / SHM 深度剖析） | 10 | publish→DDS→subscribe 完整路径、CDR 序列化、IntraProcess、Loaned Message、RTPS 线协议、SHM 传输 |
-| [ros2_qos_research](./ros2_qos_research/) | QoS 系统 | 5 | 策略详解、rclcpp→rmw→DDS 三层映射 |
-| [ros2_service_action_research](./ros2_service_action_research/) | Service/Action | 6 | 请求-响应配对、Action 5-topic 状态机 |
-| [ros2_tf2_research](./ros2_tf2_research/) | tf2 坐标变换 | 6 | BufferCore、LCA算法、时间插值 |
-| [ros2_parameter_system_research](./ros2_parameter_system_research/) | 参数系统 | 6 | 6个Service、动态回调、AsyncClient |
-| [ros2_launch_system_research](./ros2_launch_system_research/) | Launch 系统 | 6 | LaunchService、事件系统、Substitution |
-| [ros2_clock_time_research](./ros2_clock_time_research/) | Clock/Time | 6 | 仿真时间、Timer源码、Duration类型 |
-| [ros2_lifecycle_node_research](./ros2_lifecycle_node_research/) | Lifecycle Node | 4 | 状态机、5个回调、LifecyclePublisher |
-| [ros2_custom_fork_roadmap](./ros2_custom_fork_roadmap/) | **专题**：独立维护 ROS 2 定制版本 — 性能优化路线图 | 12 | 面向中间件/系统架构师的 6 阶段路线图、12 个优化维度、ROI 决策矩阵、基准方法论、长期维护策略 |
+| [ros2_component_research](./ros2-core/ros2_component_research/) | Component 机制 | 5 | rclcpp_components、动态加载、ComponentContainer |
+| [ros2_service_discovery_research](./ros2-core/ros2_service_discovery_research/) | 服务发现 | 5 | SPDP/SEDP、RTPS、参与者发现 |
+| [ros2_rcl_research](./ros2-core/ros2_rcl_research/) | rcl C 客户端库 | 6 | 底层 C API、wait_set、rcl_init |
+| [ros2_rclcpp_core_research](./ros2-core/ros2_rclcpp_core_research/) | rclcpp 核心 | 6 | Node/Publisher/Subscription/Executor |
+| [ros2_topic_communication_research](./ros2-core/ros2_topic_communication_research/) | Topic 通信链路（含 IPC / Loaned / RTPS / SHM 深度剖析） | 10 | publish→DDS→subscribe 完整路径、CDR 序列化、IntraProcess、Loaned Message、RTPS 线协议、SHM 传输 |
+| [ros2_qos_research](./ros2-core/ros2_qos_research/) | QoS 系统 | 5 | 策略详解、rclcpp→rmw→DDS 三层映射 |
+| [ros2_service_action_research](./ros2-core/ros2_service_action_research/) | Service/Action | 6 | 请求-响应配对、Action 5-topic 状态机 |
+| [ros2_tf2_research](./ros2-core/ros2_tf2_research/) | tf2 坐标变换 | 6 | BufferCore、LCA算法、时间插值 |
+| [ros2_parameter_system_research](./ros2-core/ros2_parameter_system_research/) | 参数系统 | 6 | 6个Service、动态回调、AsyncClient |
+| [ros2_launch_system_research](./ros2-core/ros2_launch_system_research/) | Launch 系统 | 6 | LaunchService、事件系统、Substitution |
+| [ros2_clock_time_research](./ros2-core/ros2_clock_time_research/) | Clock/Time | 6 | 仿真时间、Timer源码、Duration类型 |
+| [ros2_lifecycle_node_research](./ros2-core/ros2_lifecycle_node_research/) | Lifecycle Node | 4 | 状态机、5个回调、LifecyclePublisher |
+| [ros2_custom_fork_roadmap](./ros2-roadmaps/ros2_custom_fork_roadmap/) | **专题**：独立维护 ROS 2 定制版本 — 性能优化路线图 | 12 | 面向中间件/系统架构师的 6 阶段路线图、12 个优化维度、ROI 决策矩阵、基准方法论、长期维护策略 |
 
 ---
 

@@ -342,4 +342,4 @@ Intel i7-12700, Ubuntu 22.04 PREEMPT_RT, 1 KB 消息, 1000 Hz:
 - [06 IPC](./06_intra_process.md) - 同进程 0 拷贝；
 - [07 Loaned Messages](./07_loaned_messages.md) - 跨进程 0 拷贝；
 - [08 RTPS 线协议](./08_rtps_wire_protocol.md) - SHM 也要跑 RTPS DATA/HEARTBEAT/ACKNACK；
-- [自定义 Fork Roadmap 06](../ros2_custom_fork_roadmap/06_phase4_dds_shm_iceoryx.md) - 工程落地建议。
+- [自定义 Fork Roadmap 06](../../ros2-roadmaps/ros2_custom_fork_roadmap/06_phase4_dds_shm_iceoryx.md) - 工程落地建议。

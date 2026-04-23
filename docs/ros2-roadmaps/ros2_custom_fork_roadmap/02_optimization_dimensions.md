@@ -177,7 +177,7 @@ D12 编译器 & LTO & PGO          ★              ★        ★        低
 
 ## D8. QoS 策略
 
-**原理**：QoS 不仅是"功能开关"也是**性能参数**。见 [ros2_qos_research](../ros2_qos_research/)。
+**原理**：QoS 不仅是"功能开关"也是**性能参数**。见 [ros2_qos_research](../../ros2-core/ros2_qos_research/)。
 
 **常见误用**：
 - 控制环用 RELIABLE + history=10 → 每条消息都要 ACK + 缓存 10 条；
