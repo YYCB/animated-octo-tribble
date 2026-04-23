@@ -1,0 +1,269 @@
+# 具身智能方向 ROS 2 调研路线图（plan.md）
+
+> 面向角色：具身智能行业的**架构师 / 软件开发工程师 / 系统工程师**
+> 起点：本仓库已完成的 ROS 2 核心 12 模块源码调研、`ros2_custom_fork_roadmap` 性能路线图、相机 SDK / HAL 对比、`chassis_protocol` 自研 HAL 落地。
+> 目标：在已有"经典 ROS 2 内核"基础上，沿"经典控制栈 → 新一代数据通路 → AI 大脑 → 工程基础设施"四条主线迭代，形成完整的具身智能架构知识地图。
+>
+> **使用方式**：每个阶段单独立项，按本文件顺序串行迭代；每阶段完成后回填本文件的"产出索引"链接，并在 `docs/ROS2_RESEARCH_INDEX.md` 增加目录项。
+
+---
+
+## 总进度看板
+
+- [ ] **Phase 1 — `ros2_control` 源码深度调研**（最高优先级，补具身智能必修课）
+- [ ] **Phase 2 — Isaac ROS / NITROS 调研**（GPU 零拷贝 + Type Negotiation，与 custom-fork 路线图呼应）
+- [ ] **Phase 3 — LLM / VLA 与 ROS 2 集成模式**（行业风口，架构判断必备）
+- [ ] **Phase 4 — MoveIt 2 架构调研**（操作栈事实标准）
+- [ ] **Phase 5 — Nav2 架构调研**（移动栈事实标准，对接 chassis_protocol）
+- [ ] **Phase 6 — `rosbag2` 与模仿学习数据管线**
+- [ ] **Phase 7 — 实时性 / `PREEMPT_RT` / `iceoryx2`**
+- [ ] **Phase 8 — micro-ROS 与分布式部署**
+- [ ] **Phase 9 — 仿真栈：Isaac Sim / Gazebo Harmonic ↔ ROS 2 桥**
+- [ ] **Phase 10 — 多模态感知栈深化**
+- [ ] **Phase 11 — 安全（sros2 / DDS-Security）与 OTA**
+- [ ] **Phase 12 — 已有调研的"二期深化"专题集合**
+
+---
+
+## 通用方法论（每个 Phase 都遵循）
+
+每个调研专题统一按以下结构产出，目录形如 `docs/<分类>/<主题>_research/`：
+
+1. `00_index.md` — 索引、整体架构图、关键调用链总览
+2. `01_architecture.md` — 模块分层、核心数据结构、生命周期
+3. `02_xxx.md ~ 0N_xxx.md` — 按子模块逐个剖析（源码级 + 行号引用）
+4. `0N+1_data_flows.md` — 端到端调用链 / 时序图
+5. `0N+2_integration.md` — 与本仓库已有组件（`chassis_protocol` / 相机 SDK / 已调研 ROS 2 模块）的对接点和决策矩阵
+6. （可选）`benchmarks/` — 实测脚本与数据
+
+**统一交付标准**：
+- 文档语言：中文为主、关键术语保留英文原词
+- 源码引用：`仓库相对路径:行号` 或上游 `repo@tag:path:line`
+- 每个 Phase 末尾必须更新 `docs/ROS2_RESEARCH_INDEX.md` 表格 + 本文件总进度看板
+
+---
+
+## Phase 1 — `ros2_control` 源码深度调研
+
+**目录建议**：`docs/ros2-ecosystem/ros2_control_research/`
+**优先级**：⭐⭐⭐⭐⭐
+**依赖**：已完成的 `ros2_lifecycle_node_research`、`ros2_rclcpp_core_research`、`chassis_protocol`
+
+### 调研目标
+- 用源码级理解回答："何时用 `ros2_control` / 何时像 `chassis_protocol` 那样自研 HAL？"
+- 给出具身智能整机（底盘 + 机械臂 + 夹爪 + 头部）在 `ros2_control` 框架下的统一拓扑建议
+
+### 子主题清单
+- [ ] `controller_manager` 实时调度循环（`update()` 时序、`read()` / `write()` 顺序、`update_rate`）
+- [ ] `hardware_interface`：`SystemInterface` / `ActuatorInterface` / `SensorInterface` 三种抽象的差异与选型
+- [ ] `resource_manager` 与 `LoanedStateInterface` / `LoanedCommandInterface` 的内存模型
+- [ ] 控制器生命周期（与 `lifecycle_node` 的关系）、`ChainableController` 级联（impedance / admittance 控制必备）
+- [ ] 常用控制器：`joint_trajectory_controller` / `diff_drive_controller` / `mecanum_drive_controller` / `forward_command_controller`
+- [ ] URDF `<ros2_control>` tag 解析、插件加载机制（`pluginlib`）
+- [ ] 与 `MoveIt 2` 的接口（`FollowJointTrajectory` action）、与 Gazebo / Isaac Sim 的硬件插件
+- [ ] **决策矩阵**：`ros2_control` vs 自研 HAL（以本仓库 `chassis_protocol` 为反例对照）
+
+### 验收
+- [ ] 产出 `00_index.md ~ 0N_xxx.md`
+- [ ] 产出一份 `chassis_protocol` 改造为 `hardware_interface::SystemInterface` 的可行性评估（不一定真改，作为架构对照）
+- [ ] 更新 `ROS2_RESEARCH_INDEX.md`、勾选本看板
+
+---
+
+## Phase 2 — Isaac ROS / NITROS 调研
+
+**目录建议**：`docs/ros2-ecosystem/isaac_ros_nitros_research/`
+**优先级**：⭐⭐⭐⭐⭐
+**依赖**：已完成的 `ros2_topic_communication_research`（IPC/Loaned/SHM 章节）、`ros2_custom_fork_roadmap`
+
+### 调研目标
+- 弄清 NVIDIA NITROS（NVIDIA Isaac Transport for ROS）的零拷贝、GPU 内存共享、Type Adaptation & Type Negotiation 机制
+- 评估其能否替代/补充本仓库 `ros2_custom_fork_roadmap` 中提出的若干性能优化项
+
+### 子主题清单
+- [ ] **Type Adaptation**（REP-2007）：`rclcpp::TypeAdapter` 源码、与 ROS 消息的双向映射
+- [ ] **Type Negotiation**（REP-2009）：发布/订阅双方协商最优内存格式（CPU / CUDA / NvSci / DMA-BUF）
+- [ ] NITROS 桥接节点（`isaac_ros_nitros`）的实现：如何在保持 ROS 2 topic 语义的前提下传 GPU buffer
+- [ ] Managed NITROS Publisher/Subscriber、`NitrosImage` / `NitrosPointCloud` 类型
+- [ ] Isaac ROS 主要包族：DNN inference、visual SLAM、AprilTag、Stereo、Nvblox
+- [ ] 与 `image_transport` / `point_cloud_transport` 的关系
+- [ ] **对照本仓库 custom-fork 路线图**：哪些优化项 NITROS 已实现、哪些仍是开放空间
+
+### 验收
+- [ ] 产出文档集
+- [ ] 在 `ros2_custom_fork_roadmap` 中补充"NITROS 已覆盖 / 未覆盖"对照小节
+
+---
+
+## Phase 3 — LLM / VLA 与 ROS 2 集成模式
+
+**目录建议**：`docs/embodied-ai/llm_vla_ros2_integration/`（新建一级分类）
+**优先级**：⭐⭐⭐⭐
+**依赖**：Phase 1（明确控制环边界）
+
+### 调研目标
+- 梳理"LLM/VLA 推理（10-500ms） vs 实时控制（1ms~10ms）"之间的分层架构模式
+- 对比当前主流开源方案的接入方式与工程化代价
+
+### 子主题清单
+- [ ] **任务分层模型**：高层 task planner（LLM）→ 中层 skill / behavior（BT / 状态机）→ 低层控制器（ros2_control / 自研 HAL）的边界
+- [ ] **OpenVLA / RT-2 / π0 / RDT** 等 VLA 的输出形式（动作 token、joint delta、ee pose），及其到 `JointTrajectory` / `TwistStamped` 的转换层设计
+- [ ] **`rai` (Robec)** 项目：LLM Agent + ROS 2 工具调用模式
+- [ ] **`ros2_llm` / Foxglove + LLM** 的可观测性集成
+- [ ] **NVIDIA Isaac Manipulator / GROOT** 的官方推荐架构
+- [ ] 推理服务部署方式：本机 GPU / 远端 gRPC / Triton Inference Server，及对 ROS 2 节点拓扑的影响
+- [ ] **数据飞轮**：`rosbag2` 采集 → 数据清洗 → VLA 训练 → 模型回放验证 的闭环
+
+### 验收
+- [ ] 产出"分层架构参考实现"图（不一定写代码）
+- [ ] 产出 3-5 个开源项目的横向对比表
+
+---
+
+## Phase 4 — MoveIt 2 架构调研
+
+**目录建议**：`docs/ros2-ecosystem/moveit2_research/`
+**优先级**：⭐⭐⭐⭐
+**依赖**：Phase 1（`ros2_control` 接口）
+
+### 子主题清单
+- [ ] `move_group` 节点的插件体系：Planner（OMPL / Pilz / STOMP）、IK（KDL / TracIK / bio_ik）、Collision（FCL）、Sensor
+- [ ] `moveit_py` Python API（取代 `moveit_commander`）
+- [ ] **MoveIt Servo**：实时增量控制、奇异点处理
+- [ ] **Hybrid Planning**（global + local planner 协同）
+- [ ] `planning_scene_monitor` 的实时性瓶颈与优化
+- [ ] 与 `ros2_control` 的耦合点（`FollowJointTrajectory` action）
+- [ ] 与 VLA（Phase 3）输出的对接：`pose_goal` / `joint_goal` / `cartesian_path`
+
+---
+
+## Phase 5 — Nav2 架构调研
+
+**目录建议**：`docs/ros2-ecosystem/nav2_research/`
+**优先级**：⭐⭐⭐⭐
+**依赖**：`chassis_protocol`（cmd_vel 接口端）
+
+### 子主题清单
+- [ ] 整体架构：`bt_navigator` / `planner_server` / `controller_server` / `behavior_server` / `smoother_server`
+- [ ] BehaviorTree 集成：自定义 BT 节点、`nav2_behavior_tree` 内置节点
+- [ ] `Costmap2D` 插件体系（static / inflation / obstacle / voxel / spatio-temporal）
+- [ ] 主流 planner / controller 插件对比（NavFn / SmacPlanner / ThetaStar / DWB / MPPI / RPP）
+- [ ] AMCL / SLAM Toolbox / nav2_collision_monitor
+- [ ] **与 `chassis_protocol` 的对接清单**：QoS、TF、odom 来源、cmd_vel 拓扑
+
+---
+
+## Phase 6 — `rosbag2` 与模仿学习数据管线
+
+**目录建议**：`docs/ros2-ecosystem/rosbag2_research/`
+**优先级**：⭐⭐⭐⭐
+
+### 子主题清单
+- [ ] `rosbag2_cpp` 架构、`SequentialWriter` / `SequentialReader`
+- [ ] Storage plugin：`mcap` vs `sqlite3`，压缩、分片、索引
+- [ ] `rosbag2_transport`：录制/回放的时钟模型（与 `ros2_clock_time_research` 衔接）
+- [ ] 大规模采集时的零拷贝、IPC、磁盘吞吐瓶颈
+- [ ] 面向模仿学习的数据 schema 设计：观测同步、动作对齐、episode 切分
+- [ ] Foxglove / PlotJuggler / Webviz 的回放生态
+
+---
+
+## Phase 7 — 实时性 / `PREEMPT_RT` / `iceoryx2`
+
+**目录建议**：`docs/ros2-core/ros2_realtime_research/`
+**优先级**：⭐⭐⭐⭐
+**依赖**：`ros2_topic_communication_research` / `ros2_rclcpp_core_research`
+
+### 子主题清单
+- [ ] `PREEMPT_RT` 内核要点、ROS 2 节点的 CPU pinning / SCHED_FIFO 设置
+- [ ] Executor 实时性对比：`SingleThreadedExecutor` / `MultiThreadedExecutor` / `StaticSingleThreadedExecutor` / `EventsExecutor`
+- [ ] **`iceoryx` / `iceoryx2`** 共享内存中间件，`rmw_iceoryx`
+- [ ] CycloneDDS 低延迟配置、Zenoh-RMW 候选
+- [ ] DDS-SHM vs iceoryx vs LoanedMessage 三者深度对比（深化 `ros2_topic_communication_research` 的 SHM 章节）
+- [ ] 实测：1kHz 控制环抖动测量方法
+
+---
+
+## Phase 8 — micro-ROS 与分布式部署
+
+**目录建议**：`docs/ros2-ecosystem/micro_ros_research/`
+**优先级**：⭐⭐⭐
+
+### 子主题清单
+- [ ] micro-ROS 在 STM32 / ESP32 / Zephyr 上的运行模型
+- [ ] XRCE-DDS Agent / Client 协议
+- [ ] `ROS_DOMAIN_ID` / DDS Discovery Server 在多机/多容器/跨网段部署中的实践
+- [ ] **具身智能整机部署拓扑参考**：主控 SoC（Jetson/X86）+ 多 MCU 关节驱动 + 远端云端
+
+---
+
+## Phase 9 — 仿真栈：Isaac Sim / Gazebo Harmonic ↔ ROS 2 桥
+
+**目录建议**：`docs/ros2-ecosystem/sim_bridges_research/`
+**优先级**：⭐⭐⭐⭐
+
+### 子主题清单
+- [ ] Gazebo Harmonic 架构、`ros_gz_bridge` / `ros_gz_sim` 消息映射
+- [ ] Isaac Sim `omni.isaac.ros2_bridge`、Action Graph、OmniGraph
+- [ ] 仿真时钟（`/clock` topic）与 `use_sim_time`（衔接 `ros2_clock_time_research`）
+- [ ] Sim2Real：传感器噪声、domain randomization、`ros2_control` 的 `mock_components` / `gz_ros2_control` / `isaac_ros2_control`
+- [ ] 数据生成管线：仿真 → rosbag2 → VLA 训练（与 Phase 3 / Phase 6 闭环）
+
+---
+
+## Phase 10 — 多模态感知栈深化
+
+**目录建议**：`docs/ros2-ecosystem/perception_stack_research/`
+**优先级**：⭐⭐⭐
+**依赖**：已完成的 `realsense-ros-4.57.7-analysis` / `orbbec_sdk_ros2_analysis`
+
+### 子主题清单
+- [ ] `image_transport` / `point_cloud_transport` 的插件体系（compressed / theora / zstd / draco）
+- [ ] 多传感器时间同步：`message_filters::TimeSynchronizer` 源码、硬件 PTP / IEEE 1588
+- [ ] GPU 推理节点接入：`isaac_ros_dnn_inference` / `tensorrt_yolov8` / `ros2_torch`
+- [ ] 触觉、IMU、力矩、关节扭矩等"非视觉"传感器在 ROS 2 中的标准消息与采集模式
+- [ ] 与 NITROS（Phase 2）的衔接：何时升级到 GPU 零拷贝管线
+
+---
+
+## Phase 11 — 安全（sros2 / DDS-Security）与 OTA
+
+**目录建议**：`docs/ros2-ecosystem/security_ota_research/`
+**优先级**：⭐⭐
+
+### 子主题清单
+- [ ] `sros2` 工具、DDS-Security 五大插件（Auth / AccessControl / Cryptographic / Logging / DataTagging）
+- [ ] keystore 管理、企业 CA 集成
+- [ ] 容器化部署：`ros:humble` 镜像、`docker-compose` 多节点拓扑
+- [ ] OTA 升级架构（Mender / RAUC / 自研）、A/B 分区与 ROS 2 节点滚动重启
+
+---
+
+## Phase 12 — 已有调研的"二期深化"专题集合
+
+按需挑选，不强制顺序。每项独立成小专题。
+
+- [ ] **`rmw` 完整抽象层对比**：`rmw_fastrtps_cpp` vs `rmw_cyclonedds_cpp` vs `rmw_zenoh` 并排剖析
+- [ ] **QoS 调优手册**：相机 / 激光 / 控制环三类典型 topic 的 QoS profile + 失败案例库
+- [ ] **整机故障管理**：`lifecycle_node` + `diagnostic_aggregator` + BehaviorTree 的协同
+- [ ] **custom-fork 路线图执行篇**：挑 1-2 个最高 ROI 优化（如 IPC 零拷贝 + Executor）做实测 benchmark
+- [ ] **`arm_protocol` / `gripper_protocol`**：复用 `chassis_protocol` 的分层模式，沉淀"具身智能 HAL 框架"
+
+---
+
+## 迭代节奏建议
+
+- 每个 Phase 视为一个独立 PR（或一组 PR），完成后回填本文件 + `ROS2_RESEARCH_INDEX.md`
+- Phase 1 → 2 → 3 是建议的"主线三连"，完成后即覆盖"经典控制 + 新一代数据通路 + AI 大脑"三大支柱
+- Phase 4-12 可根据当时业务优先级动态重排
+- 每个 Phase 启动前，先在该 Phase 章节列出"本次具体要回答的 3-5 个核心问题"，避免无边界发散
+
+---
+
+## 维护说明
+
+- 本文件是**活文档**：每个 Phase 完成后必须：
+  1. 勾选"总进度看板"对应项
+  2. 勾选该 Phase 的"子主题清单"完成项（未完成可标注原因）
+  3. 在该 Phase 末尾追加"产出索引"小节，列出生成的文档路径
+- 新增 Phase 请追加到末尾，不要打乱已编号的阶段
