@@ -17,6 +17,7 @@
 | [ros2_clock_time_research](./ros2-core/ros2_clock_time_research/) | Clock/Time | 6 | 仿真时间、Timer源码、Duration类型 |
 | [ros2_lifecycle_node_research](./ros2-core/ros2_lifecycle_node_research/) | Lifecycle Node | 4 | 状态机、5个回调、LifecyclePublisher |
 | [ros2_custom_fork_roadmap](./ros2-roadmaps/ros2_custom_fork_roadmap/) | **专题**：独立维护 ROS 2 定制版本 — 性能优化路线图 | 12 | 面向中间件/系统架构师的 6 阶段路线图、12 个优化维度、ROI 决策矩阵、基准方法论、长期维护策略 |
+| [ros2_control_research](./ros2-ecosystem/ros2_control_research/) | **Phase 1**：ros2_control 源码深度调研 | 11 | CM 实时循环、System/Actuator/Sensor HAL 抽象、ResourceManager 内存模型、ChainableController、JTC/DiffDrive 等控制器、pluginlib 加载、MoveIt2/Gazebo/Isaac 集成、决策矩阵、chassis_protocol 改造评估、整机拓扑建议 |
 
 ---
 
@@ -111,14 +112,17 @@ ros2 lifecycle set /node activate
 
 ---
 
-## 待研究主题（P4 — 后续计划）
+## 待研究主题（Phase 2+ — 后续计划，见 plan.md）
 
 | 主题 | 涉及包 | 优先级 |
 |------|--------|--------|
-| rosbag2 录制/回放架构 | rosbag2, rosbag2_transport | P4 |
-| rosidl 消息生成系统 | rosidl_default_generators | P4 |
-| rclcpp 零拷贝 API | rclcpp LoanedMessage | P4 |
-| rmw 抽象层完整分析 | rmw, rmw_fastrtps | P4 |
-| ros2_control 架构 | controller_manager, hardware_interface | P4 |
-| MoveIt2 架构 | moveit_core, moveit_ros | P4 |
-| Nav2 架构 | nav2_core, nav2_bt_navigator | P4 |
+| Isaac ROS / NITROS（GPU 零拷贝 + Type Negotiation） | isaac_ros_nitros, rclcpp TypeAdapter | Phase 2 |
+| LLM / VLA 与 ROS 2 集成模式 | openVLA, ros2_llm, Triton | Phase 3 |
+| MoveIt 2 架构 | moveit_core, moveit_ros, MoveIt Servo | Phase 4 |
+| Nav2 架构 | nav2_core, nav2_bt_navigator, costmap_2d | Phase 5 |
+| rosbag2 与模仿学习数据管线 | rosbag2, mcap, rosbag2_transport | Phase 6 |
+| 实时性 / PREEMPT_RT / iceoryx2 | rmw_iceoryx, CycloneDDS, Zenoh | Phase 7 |
+| micro-ROS 与分布式部署 | micro_ros_agent, XRCE-DDS | Phase 8 |
+| 仿真栈 Isaac Sim / Gazebo Harmonic | ros_gz_bridge, omni.isaac.ros2_bridge | Phase 9 |
+| 多模态感知栈深化 | image_transport, message_filters, TensorRT | Phase 10 |
+| 安全（sros2 / DDS-Security）与 OTA | sros2, fastdds_security | Phase 11 |

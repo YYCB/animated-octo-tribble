@@ -10,7 +10,7 @@
 
 ## 总进度看板
 
-- [ ] **Phase 1 — `ros2_control` 源码深度调研**（最高优先级，补具身智能必修课）
+- [x] **Phase 1 — `ros2_control` 源码深度调研**（已完成）
 - [ ] **Phase 2 — Isaac ROS / NITROS 调研**（GPU 零拷贝 + Type Negotiation，与 custom-fork 路线图呼应）
 - [ ] **Phase 3 — LLM / VLA 与 ROS 2 集成模式**（行业风口，架构判断必备）
 - [ ] **Phase 4 — MoveIt 2 架构调研**（操作栈事实标准）
@@ -54,19 +54,32 @@
 - 给出具身智能整机（底盘 + 机械臂 + 夹爪 + 头部）在 `ros2_control` 框架下的统一拓扑建议
 
 ### 子主题清单
-- [ ] `controller_manager` 实时调度循环（`update()` 时序、`read()` / `write()` 顺序、`update_rate`）
-- [ ] `hardware_interface`：`SystemInterface` / `ActuatorInterface` / `SensorInterface` 三种抽象的差异与选型
-- [ ] `resource_manager` 与 `LoanedStateInterface` / `LoanedCommandInterface` 的内存模型
-- [ ] 控制器生命周期（与 `lifecycle_node` 的关系）、`ChainableController` 级联（impedance / admittance 控制必备）
-- [ ] 常用控制器：`joint_trajectory_controller` / `diff_drive_controller` / `mecanum_drive_controller` / `forward_command_controller`
-- [ ] URDF `<ros2_control>` tag 解析、插件加载机制（`pluginlib`）
-- [ ] 与 `MoveIt 2` 的接口（`FollowJointTrajectory` action）、与 Gazebo / Isaac Sim 的硬件插件
-- [ ] **决策矩阵**：`ros2_control` vs 自研 HAL（以本仓库 `chassis_protocol` 为反例对照）
+- [x] `controller_manager` 实时调度循环（`update()` 时序、`read()` / `write()` 顺序、`update_rate`）
+- [x] `hardware_interface`：`SystemInterface` / `ActuatorInterface` / `SensorInterface` 三种抽象的差异与选型
+- [x] `resource_manager` 与 `LoanedStateInterface` / `LoanedCommandInterface` 的内存模型
+- [x] 控制器生命周期（与 `lifecycle_node` 的关系）、`ChainableController` 级联（impedance / admittance 控制必备）
+- [x] 常用控制器：`joint_trajectory_controller` / `diff_drive_controller` / `mecanum_drive_controller` / `forward_command_controller`
+- [x] URDF `<ros2_control>` tag 解析、插件加载机制（`pluginlib`）
+- [x] 与 `MoveIt 2` 的接口（`FollowJointTrajectory` action）、与 Gazebo / Isaac Sim 的硬件插件
+- [x] **决策矩阵**：`ros2_control` vs 自研 HAL（以本仓库 `chassis_protocol` 为反例对照）
 
 ### 验收
-- [ ] 产出 `00_index.md ~ 0N_xxx.md`
-- [ ] 产出一份 `chassis_protocol` 改造为 `hardware_interface::SystemInterface` 的可行性评估（不一定真改，作为架构对照）
-- [ ] 更新 `ROS2_RESEARCH_INDEX.md`、勾选本看板
+- [x] 产出 `00_index.md ~ 10_integration.md`（共 11 个文档）
+- [x] 产出一份 `chassis_protocol` 改造为 `hardware_interface::SystemInterface` 的可行性评估（见 `10_integration.md`）
+- [x] 更新 `ROS2_RESEARCH_INDEX.md`、勾选本看板
+
+### 产出索引
+- `docs/ros2-ecosystem/ros2_control_research/00_index.md` — 总索引 + 架构图 + 调用链速查
+- `docs/ros2-ecosystem/ros2_control_research/01_architecture.md` — 包结构 + 核心数据结构 + 生命周期
+- `docs/ros2-ecosystem/ros2_control_research/02_controller_manager.md` — 实时循环 + Service 接口 + 原子切换
+- `docs/ros2-ecosystem/ros2_control_research/03_hardware_interface.md` — System/Actuator/Sensor 对比 + 选型决策树
+- `docs/ros2-ecosystem/ros2_control_research/04_resource_manager.md` — 内存布局 + LoanedInterface + 接口所有权
+- `docs/ros2-ecosystem/ros2_control_research/05_controller_lifecycle.md` — 生命周期回调 + ChainableController + realtime_tools
+- `docs/ros2-ecosystem/ros2_control_research/06_builtin_controllers.md` — JTC / DiffDrive / Mecanum / FCC / Admittance
+- `docs/ros2-ecosystem/ros2_control_research/07_urdf_plugin_loading.md` — URDF 解析 + pluginlib + Xacro 最佳实践
+- `docs/ros2-ecosystem/ros2_control_research/08_external_integrations.md` — MoveIt 2 / Gazebo / Isaac Sim / mock_components
+- `docs/ros2-ecosystem/ros2_control_research/09_data_flows.md` — 启动 + 稳态 + 规划 + 切换 + 关机 + 错误时序
+- `docs/ros2-ecosystem/ros2_control_research/10_integration.md` — 决策矩阵 + chassis_protocol 改造评估 + 整机拓扑建议
 
 ---
 
