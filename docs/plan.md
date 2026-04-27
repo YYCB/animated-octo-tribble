@@ -83,28 +83,30 @@
 
 ---
 
-## Phase 2 — Isaac ROS / NITROS 调研
+## Phase 2 — Isaac ROS / NITROS 调研（已完成 ✅）
 
-**目录建议**：`docs/ros2-ecosystem/isaac_ros_nitros_research/`
-**优先级**：⭐⭐⭐⭐⭐
-**依赖**：已完成的 `ros2_topic_communication_research`（IPC/Loaned/SHM 章节）、`ros2_custom_fork_roadmap`
-
-### 调研目标
-- 弄清 NVIDIA NITROS（NVIDIA Isaac Transport for ROS）的零拷贝、GPU 内存共享、Type Adaptation & Type Negotiation 机制
-- 评估其能否替代/补充本仓库 `ros2_custom_fork_roadmap` 中提出的若干性能优化项
+**目录**：`docs/ros2-ecosystem/isaac_ros_nitros_research/`
 
 ### 子主题清单
-- [ ] **Type Adaptation**（REP-2007）：`rclcpp::TypeAdapter` 源码、与 ROS 消息的双向映射
-- [ ] **Type Negotiation**（REP-2009）：发布/订阅双方协商最优内存格式（CPU / CUDA / NvSci / DMA-BUF）
-- [ ] NITROS 桥接节点（`isaac_ros_nitros`）的实现：如何在保持 ROS 2 topic 语义的前提下传 GPU buffer
-- [ ] Managed NITROS Publisher/Subscriber、`NitrosImage` / `NitrosPointCloud` 类型
-- [ ] Isaac ROS 主要包族：DNN inference、visual SLAM、AprilTag、Stereo、Nvblox
-- [ ] 与 `image_transport` / `point_cloud_transport` 的关系
-- [ ] **对照本仓库 custom-fork 路线图**：哪些优化项 NITROS 已实现、哪些仍是开放空间
+- [x] **Type Adaptation**（REP-2007）：`rclcpp::TypeAdapter` 源码、与 ROS 消息的双向映射
+- [x] **Type Negotiation**（REP-2009）：发布/订阅双方协商最优内存格式（CPU / CUDA / NvSci / DMA-BUF）
+- [x] NITROS 桥接节点（`isaac_ros_nitros`）的实现：如何在保持 ROS 2 topic 语义的前提下传 GPU buffer
+- [x] Managed NITROS Publisher/Subscriber、`NitrosImage` / `NitrosPointCloud` 类型
+- [x] Isaac ROS 主要包族：DNN inference、visual SLAM、AprilTag、Stereo、Nvblox
+- [x] 与 `image_transport` / `point_cloud_transport` 的关系
+- [x] **对照本仓库 custom-fork 路线图**：哪些优化项 NITROS 已实现（D4/D5/D6 ✅）、哪些仍是开放空间（D1/D2/D7/D10/D11）
 
-### 验收
-- [ ] 产出文档集
-- [ ] 在 `ros2_custom_fork_roadmap` 中补充"NITROS 已覆盖 / 未覆盖"对照小节
+### 产出索引
+- `00_index.md` — 总览 + 整体架构图 + 与已有工作关联
+- `01_architecture.md` — NITROS 分层架构 + NitrosNode/GXF 包结构 + Jetson 特化
+- `02_type_adaptation.md` — REP-2007 + TypeAdapter 源码 + NITROS NitrosImage TypeAdapter 实现
+- `03_type_negotiation.md` — REP-2009 + 协商 5 步协议 + NvSci / DMA-BUF 跨进程 GPU 共享
+- `04_nitros_bridge.md` — GXF ↔ ROS 2 桥接机制 + NitrosPublisher/Subscriber 内部流程
+- `05_managed_pub_sub.md` — NitrosType 类型层次 + NitrosImage/PointCloud/TensorList 访问示例
+- `06_package_ecosystem.md` — DNN/vSLAM/Nvblox/AprilTag 功能矩阵 + 具身智能适用性评估
+- `07_transport_plugins.md` — 与 image_transport/point_cloud_transport 关系 + 降级链路处理
+- `08_data_flows.md` — 三个场景完整时序（全 GPU / 插入 CPU 节点 / 跨进程 NvSci）
+- `09_integration.md` — D1~D12 逐项对照矩阵 + 组合优化路线图 + 选型建议
 
 ---
 
