@@ -21,6 +21,7 @@
 | [isaac_ros_nitros_research](./ros2-ecosystem/isaac_ros_nitros_research/) | **Phase 2**：Isaac ROS / NITROS 源码调研 | 10 | NITROS 分层架构、REP-2007 TypeAdapter 源码、REP-2009 Type Negotiation 协商协议、NvSci/DMA-BUF 跨进程 GPU 零拷贝、NitrosImage/PointCloud/TensorList、DNN/vSLAM/Nvblox/AprilTag 包族、与 image_transport 关系、端到端时序、custom-fork D1~D12 逐项对照矩阵 |
 | [llm_vla_ros2_integration](./embodied-ai/llm_vla_ros2_integration/) | **Phase 3**：LLM / VLA 与 ROS 2 集成模式 | 9 | 四层任务分层架构（L4 LLM→L3 VLA→L2 BT→L1 Control）、OpenVLA/π0/RDT 动作格式对比与转换层设计、rai LLM Agent 工具调用模式、Foxglove+LLM 可观测性、Isaac Manipulator+GROOT 编排、本机TRT/远端gRPC/Triton 部署对比、rosbag2→LeRobot 数据飞轮、5 个开源方案横向对比矩阵 |
 | [nav2_research](./ros2-ecosystem/nav2_research/) | **Phase 5（提前）**：Nav2 架构调研 | 8 | 六大服务器 lifecycle 管理 + bond 机制、NavigateToPose 完整消息流、BT.CPP v4 内置节点全表 + 自定义节点开发、Costmap2D 双层架构 + StaticLayer/Inflation/Obstacle/Voxel/STVL 插件、NavFn/SmacPlanner2D/Hybrid/ThetaStar 规划器对比、DWB/MPPI/RPP 控制器对比 + Jetson 选型建议、AMCL vs SLAM Toolbox vs collision_monitor 定位方案、chassis_protocol 完整对接清单（QoS/TF/odom/cmd_vel 拓扑/改造检查表）|
+| [moveit2_research](./ros2-ecosystem/moveit2_research/) | **Phase 4**：MoveIt 2 架构调研 | 8 | move_group 架构图 + 完整规划执行消息流、Planner（OMPL算法/Pilz PTP+LIN+CIRC/STOMP）+ IK（KDL/TracIK/bio_ik 选型）+ Collision（FCL+Octomap）、MoveIt Servo 实时增量控制 + 奇异点处理 + 控制器切换、Hybrid Planning 动态重规划框架、planning_scene_monitor 锁争用优化、FollowJointTrajectory 对接 + 时间参数化（TOTG/Ruckig）、VLA→MoveIt 四种对接模式（Servo/JointJog/pose_goal/cartesian_path）+ VlaActionRouter、moveit_py 完整 API |
 
 ---
 

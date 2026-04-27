@@ -11,10 +11,10 @@
 ## 总进度看板
 
 - [x] **Phase 1 — `ros2_control` 源码深度调研**（已完成）
-- [ ] **Phase 2 — Isaac ROS / NITROS 调研**（GPU 零拷贝 + Type Negotiation，与 custom-fork 路线图呼应）
-- [ ] **Phase 3 — LLM / VLA 与 ROS 2 集成模式**（行业风口，架构判断必备）
-- [ ] **Phase 4 — MoveIt 2 架构调研**（操作栈事实标准）
-- [ ] **Phase 5 — Nav2 架构调研**（移动栈事实标准，对接 chassis_protocol）
+- [x] **Phase 2 — Isaac ROS / NITROS 调研**（已完成）
+- [x] **Phase 3 — LLM / VLA 与 ROS 2 集成模式**（已完成）
+- [x] **Phase 4 — MoveIt 2 架构调研**（已完成）
+- [x] **Phase 5 — Nav2 架构调研**（已完成，提前执行）
 - [ ] **Phase 6 — `rosbag2` 与模仿学习数据管线**
 - [ ] **Phase 7 — 实时性 / `PREEMPT_RT` / `iceoryx2`**
 - [ ] **Phase 8 — micro-ROS 与分布式部署**
@@ -136,20 +136,28 @@
 
 ---
 
-## Phase 4 — MoveIt 2 架构调研
+## Phase 4 — MoveIt 2 架构调研（已完成 ✅）
 
-**目录建议**：`docs/ros2-ecosystem/moveit2_research/`
-**优先级**：⭐⭐⭐⭐
-**依赖**：Phase 1（`ros2_control` 接口）
+**目录**：`docs/ros2-ecosystem/moveit2_research/`
 
 ### 子主题清单
-- [ ] `move_group` 节点的插件体系：Planner（OMPL / Pilz / STOMP）、IK（KDL / TracIK / bio_ik）、Collision（FCL）、Sensor
-- [ ] `moveit_py` Python API（取代 `moveit_commander`）
-- [ ] **MoveIt Servo**：实时增量控制、奇异点处理
-- [ ] **Hybrid Planning**（global + local planner 协同）
-- [ ] `planning_scene_monitor` 的实时性瓶颈与优化
-- [ ] 与 `ros2_control` 的耦合点（`FollowJointTrajectory` action）
-- [ ] 与 VLA（Phase 3）输出的对接：`pose_goal` / `joint_goal` / `cartesian_path`
+- [x] `move_group` 节点的插件体系：Planner（OMPL 算法对比 / Pilz PTP+LIN+CIRC / STOMP 随机优化）、IK（KDL / TracIK solve_type / bio_ik PSO）、Collision（FCL 性能指标 + 碰撞矩阵优化）、Sensor 传感器集成（Octomap）
+- [x] `moveit_py` Python API：pose_goal / joint_goal / named_pose / 规划器切换 / planning scene 管理 / 抓取放置 / 约束规划
+- [x] **MoveIt Servo**：实时增量控制架构（TwistStamped/JointJog）、奇异点检测与速度缩减、Servo 使能/停止 Service、ros2_control 控制器切换
+- [x] **Hybrid Planning**：Global + Local Planner 协同框架、自定义局部规划器开发模式、动态重规划触发机制
+- [x] `planning_scene_monitor` 的实时性瓶颈（锁争用 + Octomap 更新）与优化策略（碰撞矩阵 / 降采样 / 批量更新 / 冻结传感器）
+- [x] 与 `ros2_control` 的耦合点：FollowJointTrajectory 消息结构、moveit_controllers.yaml 配置、轨迹执行管理器、时间参数化（TOTG + Ruckig）
+- [x] 与 VLA（Phase 3）输出的对接：四种模式（Servo / JointJog / pose_goal / cartesian_path）对比矩阵 + VlaActionRouter 路由设计 + E-Stop 集成
+
+### 产出索引
+- `00_index.md` — 整体架构图 + 完整规划执行消息流 + 配置文件组织 + 模块交叉引用
+- `01_move_group_plugins.md` — Planner（OMPL/Pilz/STOMP）+ IK（KDL/TracIK/bio_ik）+ Collision（FCL）+ 传感器集成
+- `02_moveit_servo.md` — 实时增量控制、奇异点处理、Servo↔规划模式切换、VLA 对接速览
+- `03_hybrid_planning.md` — Global+Local 协同架构、自定义局部规划器、与传统 MoveGroup 对比
+- `04_planning_scene_monitor.md` — 实时碰撞场景维护、性能瓶颈分析、优化策略
+- `05_ros2_control_coupling.md` — FollowJointTrajectory 详解、控制器切换时序、时间参数化、对接检查表
+- `06_vla_integration.md` — 四种 VLA→MoveIt 对接模式 + VlaActionRouter 完整设计 + E-Stop 安全层
+- `07_moveit_py.md` — moveit_py 完整 API：规划/执行/场景管理/抓取放置/约束规划
 
 ---
 
