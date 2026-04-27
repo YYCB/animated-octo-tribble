@@ -15,7 +15,7 @@
 - [x] **Phase 3 — LLM / VLA 与 ROS 2 集成模式**（已完成）
 - [x] **Phase 4 — MoveIt 2 架构调研**（已完成）
 - [x] **Phase 5 — Nav2 架构调研**（已完成，提前执行）
-- [ ] **Phase 6 — `rosbag2` 与模仿学习数据管线**
+- [x] **Phase 6 — `rosbag2` 与模仿学习数据管线**（已完成）
 - [ ] **Phase 7 — 实时性 / `PREEMPT_RT` / `iceoryx2`**
 - [ ] **Phase 8 — micro-ROS 与分布式部署**
 - [ ] **Phase 9 — 仿真栈：Isaac Sim / Gazebo Harmonic ↔ ROS 2 桥**
@@ -192,12 +192,22 @@
 **优先级**：⭐⭐⭐⭐
 
 ### 子主题清单
-- [ ] `rosbag2_cpp` 架构、`SequentialWriter` / `SequentialReader`
-- [ ] Storage plugin：`mcap` vs `sqlite3`，压缩、分片、索引
-- [ ] `rosbag2_transport`：录制/回放的时钟模型（与 `ros2_clock_time_research` 衔接）
-- [ ] 大规模采集时的零拷贝、IPC、磁盘吞吐瓶颈
-- [ ] 面向模仿学习的数据 schema 设计：观测同步、动作对齐、episode 切分
-- [ ] Foxglove / PlotJuggler / Webviz 的回放生态
+- [x] `rosbag2_cpp` 架构、`SequentialWriter` / `SequentialReader`
+- [x] Storage plugin：`mcap` vs `sqlite3`，压缩、分片、索引
+- [x] `rosbag2_transport`：录制/回放的时钟模型（与 `ros2_clock_time_research` 衔接）
+- [x] 大规模采集时的零拷贝、IPC、磁盘吞吐瓶颈
+- [x] 面向模仿学习的数据 schema 设计：观测同步、动作对齐、episode 切分
+- [x] Foxglove / PlotJuggler / Webviz 的回放生态
+
+### 产出索引
+- `docs/ros2-ecosystem/rosbag2_research/00_index.md` — 总索引 + 数据飞轮架构图 + 录制/回放消息流时序 + 与本仓库关联速查
+- `docs/ros2-ecosystem/rosbag2_research/01_architecture.md` — rosbag2_cpp 核心架构：包结构、SequentialWriter/Reader 内部流程、BagMetadata 数据结构、StorageOptions/RecordOptions/PlayOptions 全览、Converter plugin、Python 绑定
+- `docs/ros2-ecosystem/rosbag2_research/02_storage_plugins.md` — MCAP vs SQLite3 深度对比：格式内部结构、时间范围查询原理、压缩插件（zstd/lz4）、分片策略、具身智能采集建议
+- `docs/ros2-ecosystem/rosbag2_research/03_transport_recording.md` — rosbag2_transport 层：RecordOptions/PlayOptions 完整参数、时钟模型（wall/sim）、QoS 兼容性处理、CLI 参数说明、预加载缓存机制
+- `docs/ros2-ecosystem/rosbag2_research/04_zero_copy_performance.md` — 大规模采集性能：零拷贝路径、磁盘吞吐瓶颈分析、多线程录制、丢帧检测、具身智能场景带宽估算与调优建议
+- `docs/ros2-ecosystem/rosbag2_research/05_imitation_learning_schema.md` — 面向模仿学习的数据 schema：观测同步、标准 topic 清单、动作对齐、Episode 切分、LeRobot HDF5 转换脚本设计、align_observations 实现、数据质量检查
+- `docs/ros2-ecosystem/rosbag2_research/06_playback_ecosystem.md` — 回放可视化生态：Foxglove Studio（WebSocket bridge + Layout JSON）、PlotJuggler、rviz2、mcap CLI 工具、具身智能 VLA rollout 调试场景
+- `docs/ros2-ecosystem/rosbag2_research/07_integration.md` — 与本仓库组件对接：chassis_protocol 集成、Phase 3 数据飞轮闭环、Phase 7 实时性对接、Phase 9 仿真数据生成、整体数据管线架构图、选型决策矩阵
 
 ---
 
