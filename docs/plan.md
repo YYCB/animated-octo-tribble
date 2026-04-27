@@ -153,19 +153,28 @@
 
 ---
 
-## Phase 5 — Nav2 架构调研
+## Phase 5 — Nav2 架构调研（已提前完成 ✅）
 
-**目录建议**：`docs/ros2-ecosystem/nav2_research/`
-**优先级**：⭐⭐⭐⭐
-**依赖**：`chassis_protocol`（cmd_vel 接口端）
+**目录**：`docs/ros2-ecosystem/nav2_research/`
 
 ### 子主题清单
-- [ ] 整体架构：`bt_navigator` / `planner_server` / `controller_server` / `behavior_server` / `smoother_server`
-- [ ] BehaviorTree 集成：自定义 BT 节点、`nav2_behavior_tree` 内置节点
-- [ ] `Costmap2D` 插件体系（static / inflation / obstacle / voxel / spatio-temporal）
-- [ ] 主流 planner / controller 插件对比（NavFn / SmacPlanner / ThetaStar / DWB / MPPI / RPP）
-- [ ] AMCL / SLAM Toolbox / nav2_collision_monitor
-- [ ] **与 `chassis_protocol` 的对接清单**：QoS、TF、odom 来源、cmd_vel 拓扑
+- [x] 整体架构：`bt_navigator` / `planner_server` / `controller_server` / `behavior_server` / `smoother_server` + lifecycle_manager + bond 机制
+- [x] BehaviorTree 集成：BT.CPP v4、`nav2_behavior_tree` 内置节点全表（Action/Condition/Decorator）、自定义 BT 节点开发、Groot2 调试
+- [x] `Costmap2D` 插件体系（static / inflation / obstacle / voxel / SpatioTemporalVoxelLayer）
+- [x] 主流 planner 对比（NavFn / SmacPlanner2D / SmacPlannerHybrid / SmacPlannerLattice / ThetaStar）
+- [x] 主流 controller 对比（DWB / MPPI / RPP）
+- [x] AMCL / SLAM Toolbox / nav2_collision_monitor / nav2_map_server / robot_localization EKF
+- [x] **与 `chassis_protocol` 的对接清单**：QoS 匹配、TF 树职责划分、odom 来源、cmd_vel 拓扑（twist_mux + collision_monitor）、最小化 launch 文件
+
+### 产出索引
+- `00_index.md` — 整体服务器拓扑图 + NavigateToPose 完整消息流
+- `01_architecture_overview.md` — 六大服务器详解 + lifecycle_manager + bond 机制 + 参数体系
+- `02_behavior_tree_integration.md` — BT.CPP v4 节点类型 + 内置节点全表 + 默认 XML 解析 + 自定义节点开发 + Groot2
+- `03_costmap2d_plugins.md` — 双层 Costmap + Layer 栈 + 五类插件（Static/Inflation/Obstacle/Voxel/STVL）+ 调试命令
+- `04_planner_plugins.md` — NavFn/SmacPlanner2D/Hybrid/Lattice/ThetaStar 对比表 + 差速底盘选型建议
+- `05_controller_plugins.md` — DWB/MPPI/RPP 原理+配置+对比表 + Jetson 选型建议
+- `06_localization.md` — AMCL 粒子滤波 + SLAM Toolbox 三种模式 + collision_monitor 安全链路 + map_server 格式
+- `07_chassis_protocol_integration.md` — QoS 对接清单 + TF 树对接 + odom 来源方案 + cmd_vel 拓扑（twist_mux）+ 改造检查表 + 最小化 launch
 
 ---
 
