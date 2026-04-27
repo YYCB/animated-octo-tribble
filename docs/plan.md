@@ -16,7 +16,7 @@
 - [x] **Phase 4 — MoveIt 2 架构调研**（已完成）
 - [x] **Phase 5 — Nav2 架构调研**（已完成，提前执行）
 - [x] **Phase 6 — `rosbag2` 与模仿学习数据管线**（已完成）
-- [ ] **Phase 7 — 实时性 / `PREEMPT_RT` / `iceoryx2`**
+- [x] **Phase 7 — 实时性 / `PREEMPT_RT` / `iceoryx2`**（已完成）
 - [ ] **Phase 8 — micro-ROS 与分布式部署**
 - [ ] **Phase 9 — 仿真栈：Isaac Sim / Gazebo Harmonic ↔ ROS 2 桥**
 - [ ] **Phase 10 — 多模态感知栈深化**
@@ -213,17 +213,29 @@
 
 ## Phase 7 — 实时性 / `PREEMPT_RT` / `iceoryx2`
 
-**目录建议**：`docs/ros2-core/ros2_realtime_research/`
+**目录**：`docs/ros2-ecosystem/realtime_research/`
 **优先级**：⭐⭐⭐⭐
 **依赖**：`ros2_topic_communication_research` / `ros2_rclcpp_core_research`
 
 ### 子主题清单
-- [ ] `PREEMPT_RT` 内核要点、ROS 2 节点的 CPU pinning / SCHED_FIFO 设置
-- [ ] Executor 实时性对比：`SingleThreadedExecutor` / `MultiThreadedExecutor` / `StaticSingleThreadedExecutor` / `EventsExecutor`
-- [ ] **`iceoryx` / `iceoryx2`** 共享内存中间件，`rmw_iceoryx`
-- [ ] CycloneDDS 低延迟配置、Zenoh-RMW 候选
-- [ ] DDS-SHM vs iceoryx vs LoanedMessage 三者深度对比（深化 `ros2_topic_communication_research` 的 SHM 章节）
-- [ ] 实测：1kHz 控制环抖动测量方法
+- [x] `PREEMPT_RT` 内核要点、ROS 2 节点的 CPU pinning / SCHED_FIFO 设置
+- [x] Executor 实时性对比：`SingleThreadedExecutor` / `MultiThreadedExecutor` / `StaticSingleThreadedExecutor` / `EventsExecutor`
+- [x] **`iceoryx` / `iceoryx2`** 共享内存中间件，`rmw_iceoryx`
+- [x] CycloneDDS 低延迟配置、Zenoh-RMW 候选
+- [x] DDS-SHM vs iceoryx vs LoanedMessage 三者深度对比
+- [x] 实测：1kHz 控制环抖动测量方法（cyclictest / ros2_tracing）
+- [x] `ros2_control` 实时控制环深化（4kHz 力控配置、ChainableController）
+- [x] `chassis_protocol` RT 改造路线图（无锁缓冲区 + epoll 替换）
+
+### 产出索引
+- `docs/ros2-ecosystem/realtime_research/00_index.md` — 总索引：实时性需求矩阵、完整实时栈架构图、延迟预算分配表、与本仓库关联速查
+- `docs/ros2-ecosystem/realtime_research/01_preempt_rt_kernel.md` — PREEMPT_RT 补丁原理、Ubuntu 22.04/24.04 安装（ubuntu-pro vs 手动编译）、BIOS 调优、cyclictest/hwlatdetect 测试、Jetson Orin RT 内核
+- `docs/ros2-ecosystem/realtime_research/02_ros2_realtime.md` — 内存锁定（mlockall）、CPU 隔离（isolcpus/cpuset/taskset）、线程优先级（SCHED_FIFO/RR）、Executor 实时对比、realtime_tools（RealtimeBuffer/Publisher/Box）、Loaned Messages、完整 RT 节点模板
+- `docs/ros2-ecosystem/realtime_research/03_iceoryx2.md` — iceoryx2 vs iceoryx1 对比、零拷贝 IPC 架构、RouDi 守护进程、rmw_iceoryx RMW 层、性能数据表、WaitSet 事件驱动、与 ros2_control 集成、局限性
+- `docs/ros2-ecosystem/realtime_research/04_dds_tuning.md` — RMW 四维对比表、CycloneDDS RT 配置（XML 详解）、FastDDS RT 配置（historyMemoryPolicy）、QoS 实时参数（DEADLINE/LIVELINESS/LATENCY_BUDGET）、网络栈调优、选型决策矩阵
+- `docs/ros2-ecosystem/realtime_research/05_ros2_control_rt.md` — controller_manager update() 时序图、hardware_interface RT 约束（禁止操作清单）、ChainableController 延迟叠加、4kHz 力控配置、EtherCAT/RS485 RT 实现要点、chassis_protocol 对接要点
+- `docs/ros2-ecosystem/realtime_research/06_latency_profiling.md` — ros2_tracing+LTTng（tracepoint 列表）、tracetools_analysis 脚本、cyclictest 完整参数与直方图解读、ros2_performance_test、perf+ftrace、端到端延迟测量方法、典型问题诊断决策树
+- `docs/ros2-ecosystem/realtime_research/07_integration.md` — chassis_protocol RT 改造路线图（SPSCRingBuffer + epoll 替换 select）、Phase 6 录制进程隔离（CPU 核分配）、整体 RT 部署图（8核分配）、Jetson Orin 特化配置（nvpmodel+jetson_clocks）、容器化 RT（Docker 参数）、选型决策矩阵
 
 ---
 
