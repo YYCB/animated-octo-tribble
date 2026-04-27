@@ -19,6 +19,7 @@
 | [ros2_custom_fork_roadmap](./ros2-roadmaps/ros2_custom_fork_roadmap/) | **专题**：独立维护 ROS 2 定制版本 — 性能优化路线图 | 12 | 面向中间件/系统架构师的 6 阶段路线图、12 个优化维度、ROI 决策矩阵、基准方法论、长期维护策略 |
 | [ros2_control_research](./ros2-ecosystem/ros2_control_research/) | **Phase 1**：ros2_control 源码深度调研 | 11 | CM 实时循环、System/Actuator/Sensor HAL 抽象、ResourceManager 内存模型、ChainableController、JTC/DiffDrive 等控制器、pluginlib 加载、MoveIt2/Gazebo/Isaac 集成、决策矩阵、chassis_protocol 改造评估、整机拓扑建议 |
 | [isaac_ros_nitros_research](./ros2-ecosystem/isaac_ros_nitros_research/) | **Phase 2**：Isaac ROS / NITROS 源码调研 | 10 | NITROS 分层架构、REP-2007 TypeAdapter 源码、REP-2009 Type Negotiation 协商协议、NvSci/DMA-BUF 跨进程 GPU 零拷贝、NitrosImage/PointCloud/TensorList、DNN/vSLAM/Nvblox/AprilTag 包族、与 image_transport 关系、端到端时序、custom-fork D1~D12 逐项对照矩阵 |
+| [llm_vla_ros2_integration](./embodied-ai/llm_vla_ros2_integration/) | **Phase 3**：LLM / VLA 与 ROS 2 集成模式 | 9 | 四层任务分层架构（L4 LLM→L3 VLA→L2 BT→L1 Control）、OpenVLA/π0/RDT 动作格式对比与转换层设计、rai LLM Agent 工具调用模式、Foxglove+LLM 可观测性、Isaac Manipulator+GROOT 编排、本机TRT/远端gRPC/Triton 部署对比、rosbag2→LeRobot 数据飞轮、5 个开源方案横向对比矩阵 |
 
 ---
 

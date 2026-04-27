@@ -110,28 +110,29 @@
 
 ---
 
-## Phase 3 — LLM / VLA 与 ROS 2 集成模式
+## Phase 3 — LLM / VLA 与 ROS 2 集成模式（已完成 ✅）
 
-**目录建议**：`docs/embodied-ai/llm_vla_ros2_integration/`（新建一级分类）
-**优先级**：⭐⭐⭐⭐
-**依赖**：Phase 1（明确控制环边界）
-
-### 调研目标
-- 梳理"LLM/VLA 推理（10-500ms） vs 实时控制（1ms~10ms）"之间的分层架构模式
-- 对比当前主流开源方案的接入方式与工程化代价
+**目录**：`docs/embodied-ai/llm_vla_ros2_integration/`
 
 ### 子主题清单
-- [ ] **任务分层模型**：高层 task planner（LLM）→ 中层 skill / behavior（BT / 状态机）→ 低层控制器（ros2_control / 自研 HAL）的边界
-- [ ] **OpenVLA / RT-2 / π0 / RDT** 等 VLA 的输出形式（动作 token、joint delta、ee pose），及其到 `JointTrajectory` / `TwistStamped` 的转换层设计
-- [ ] **`rai` (Robec)** 项目：LLM Agent + ROS 2 工具调用模式
-- [ ] **`ros2_llm` / Foxglove + LLM** 的可观测性集成
-- [ ] **NVIDIA Isaac Manipulator / GROOT** 的官方推荐架构
-- [ ] 推理服务部署方式：本机 GPU / 远端 gRPC / Triton Inference Server，及对 ROS 2 节点拓扑的影响
-- [ ] **数据飞轮**：`rosbag2` 采集 → 数据清洗 → VLA 训练 → 模型回放验证 的闭环
+- [x] **任务分层模型**：高层 task planner（LLM）→ 中层 skill/behavior（BT/状态机）→ 低层控制器（ros2_control）的边界、异步通信契约、安全层设计
+- [x] **OpenVLA / RT-2 / π0 / RDT** VLA 输出格式对比（EE Delta vs Joint Delta vs Joint Absolute）+ 转换层（VlaActionBridgeNode）+ MoveIt Servo 接入
+- [x] **`rai` (Robec)** 项目：LLM Agent + ROS 2 工具调用模式、Safety Governor、ReAct 循环
+- [x] **`ros2_llm` / Foxglove + LLM** 可观测性：ToolCallLog msg、Foxglove Panel、PlotJuggler、ros2_tracing 端到端延迟
+- [x] **NVIDIA Isaac Manipulator / GROOT**：cuMotion GPU 规划、FoundationPose、GROOT 技能编排 YAML
+- [x] 推理服务部署：本机 TensorRT / 远端 gRPC / Triton Server + 选型决策矩阵
+- [x] **数据飞轮**：rosbag2 录制配置 + 清洗流水线 + LeRobot 格式转换 + sim2real 验证
 
-### 验收
-- [ ] 产出"分层架构参考实现"图（不一定写代码）
-- [ ] 产出 3-5 个开源项目的横向对比表
+### 产出索引
+- `00_index.md` — 核心挑战时间尺度表 + 分层架构总图 + 关键集成接口速查
+- `01_task_hierarchy.md` — 四层架构详解（L0~L4）、异步模式、安全包装层、VLA 接入 ros2_control 两种方案
+- `02_vla_output_formats.md` — 6 个 VLA 模型对比表 + 动作 token 量化 + VlaActionBridgeNode + MoveIt Servo
+- `03_rai_llm_agent.md` — rai 工具定义（Service/Action/TopicReader）+ ReAct Agent 循环 + Safety Governor
+- `04_ros2_llm_observability.md` — ToolCallLog msg + Foxglove Panel + PlotJuggler + ros2_tracing + rosbag2 录制
+- `05_isaac_manipulator_groot.md` — cuMotion MoveIt 插件 + FoundationPose + GROOT workflow YAML + 性能数据
+- `06_inference_deployment.md` — 本机 TRT / 远端 gRPC / Triton 三种模式 + 网络延迟分析 + 选型矩阵
+- `07_data_flywheel.md` — rosbag2 录制配置 + 清洗流水线 + LeRobot 格式 + align_observations + sim2real
+- `08_integration.md` — 5 方案横向对比 + 分层架构参考实现图 + 选型决策矩阵 + 关键风险与缓解
 
 ---
 
