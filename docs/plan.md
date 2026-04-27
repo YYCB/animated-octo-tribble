@@ -18,10 +18,10 @@
 - [x] **Phase 6 — `rosbag2` 与模仿学习数据管线**（已完成）
 - [x] **Phase 7 — 实时性 / `PREEMPT_RT` / `iceoryx2`**（已完成）
 - [x] **Phase 8 — micro-ROS 与分布式部署**（已完成）
-- [ ] **Phase 9 — 仿真栈：Isaac Sim / Gazebo Harmonic ↔ ROS 2 桥**
-- [ ] **Phase 10 — 多模态感知栈深化**
-- [ ] **Phase 11 — 安全（sros2 / DDS-Security）与 OTA**
-- [ ] **Phase 12 — 已有调研的"二期深化"专题集合**
+- [x] **Phase 9 — 仿真栈：Isaac Sim / Gazebo Harmonic ↔ ROS 2 桥**（已完成）
+- [x] **Phase 10 — 多模态感知栈深化**（已完成）
+- [x] **Phase 11 — 安全（sros2 / DDS-Security）与 OTA**（已完成）
+- [x] **Phase 12 — 已有调研的"二期深化"专题集合**（已完成）
 
 ---
 
@@ -266,57 +266,75 @@
 
 ---
 
-## Phase 9 — 仿真栈：Isaac Sim / Gazebo Harmonic ↔ ROS 2 桥
+## Phase 9 — 仿真栈：Isaac Sim / Gazebo Harmonic ↔ ROS 2 桥 ✅
 
-**目录建议**：`docs/ros2-ecosystem/sim_bridges_research/`
+**实际目录**：`docs/ros2-ecosystem/simulation_research/`
 **优先级**：⭐⭐⭐⭐
 
-### 子主题清单
-- [ ] Gazebo Harmonic 架构、`ros_gz_bridge` / `ros_gz_sim` 消息映射
-- [ ] Isaac Sim `omni.isaac.ros2_bridge`、Action Graph、OmniGraph
-- [ ] 仿真时钟（`/clock` topic）与 `use_sim_time`（衔接 `ros2_clock_time_research`）
-- [ ] Sim2Real：传感器噪声、domain randomization、`ros2_control` 的 `mock_components` / `gz_ros2_control` / `isaac_ros2_control`
-- [ ] 数据生成管线：仿真 → rosbag2 → VLA 训练（与 Phase 3 / Phase 6 闭环）
+### 产出索引
+
+| 文件 | 内容摘要 |
+|------|---------|
+| [00_index.md](./ros2-ecosystem/simulation_research/00_index.md) | 整体架构、仿真器对比矩阵、文档导航 |
+| [01_gazebo_harmonic.md](./ros2-ecosystem/simulation_research/01_gazebo_harmonic.md) | Gazebo Harmonic 架构、ros_gz_bridge 消息映射 |
+| [02_isaac_sim.md](./ros2-ecosystem/simulation_research/02_isaac_sim.md) | Isaac Sim omni.isaac.ros2_bridge、OmniGraph、Action Graph |
+| [03_sim_time.md](./ros2-ecosystem/simulation_research/03_sim_time.md) | /clock topic、use_sim_time、时钟模型 |
+| [04_sim2real.md](./ros2-ecosystem/simulation_research/04_sim2real.md) | 传感器噪声、Domain Randomization、mock_components |
+| [05_sensor_simulation.md](./ros2-ecosystem/simulation_research/05_sensor_simulation.md) | RGB-D/LiDAR/IMU/FT 传感器仿真、Allan Variance、精度评估 |
+| [06_training_data_generation.md](./ros2-ecosystem/simulation_research/06_training_data_generation.md) | omni.replicator 管线、rosbag2 录制、Isaac Lab 并行、数据质量检查 |
+| [07_integration.md](./ros2-ecosystem/simulation_research/07_integration.md) | GazeboSystem plugin、ChassisHalMock、VLA 数据飞轮、决策矩阵 |
 
 ---
 
-## Phase 10 — 多模态感知栈深化
+## Phase 10 — 多模态感知栈深化 ✅
 
-**目录建议**：`docs/ros2-ecosystem/perception_stack_research/`
+**实际目录**：`docs/ros2-ecosystem/perception_research/`
 **优先级**：⭐⭐⭐
-**依赖**：已完成的 `realsense-ros-4.57.7-analysis` / `orbbec_sdk_ros2_analysis`
 
-### 子主题清单
-- [ ] `image_transport` / `point_cloud_transport` 的插件体系（compressed / theora / zstd / draco）
-- [ ] 多传感器时间同步：`message_filters::TimeSynchronizer` 源码、硬件 PTP / IEEE 1588
-- [ ] GPU 推理节点接入：`isaac_ros_dnn_inference` / `tensorrt_yolov8` / `ros2_torch`
-- [ ] 触觉、IMU、力矩、关节扭矩等"非视觉"传感器在 ROS 2 中的标准消息与采集模式
-- [ ] 与 NITROS（Phase 2）的衔接：何时升级到 GPU 零拷贝管线
+### 产出索引
+
+| 文件 | 内容摘要 |
+|------|---------|
+| [00_index.md](./ros2-ecosystem/perception_research/00_index.md) | 感知栈需求矩阵、架构图、NITROS 关系、版本矩阵 |
+| [01_object_detection.md](./ros2-ecosystem/perception_research/01_object_detection.md) | RT-DETR TRT 部署、YOLOv8、PointPillars、MoveIt 2 碰撞对象集成 |
+| [02_pose_estimation.md](./ros2-ecosystem/perception_research/02_pose_estimation.md) | FoundationPose 零样本 6D、DOPE 训练、AprilTag、手眼标定 |
+| [03_nvblox_3d_reconstruction.md](./ros2-ecosystem/perception_research/03_nvblox_3d_reconstruction.md) | TSDF/ESDF/Color 层架构、Nav2 costmap 层、Orin AGX 性能 |
+| [04_visual_language.md](./ros2-ecosystem/perception_research/04_visual_language.md) | CLIP/SigLIP、Grounding DINO、SAM 2、LLM→感知→操作链 |
+| [05_integration.md](./ros2-ecosystem/perception_research/05_integration.md) | 35ms 端到端延迟分析、NITROS 零拷贝节点表、RT CPU 分配 |
 
 ---
 
-## Phase 11 — 安全（sros2 / DDS-Security）与 OTA
+## Phase 11 — 安全（sros2 / DDS-Security）与 OTA ✅
 
-**目录建议**：`docs/ros2-ecosystem/security_ota_research/`
+**实际目录**：`docs/ros2-ecosystem/security_research/`
 **优先级**：⭐⭐
 
-### 子主题清单
-- [ ] `sros2` 工具、DDS-Security 五大插件（Auth / AccessControl / Cryptographic / Logging / DataTagging）
-- [ ] keystore 管理、企业 CA 集成
-- [ ] 容器化部署：`ros:humble` 镜像、`docker-compose` 多节点拓扑
-- [ ] OTA 升级架构（Mender / RAUC / 自研）、A/B 分区与 ROS 2 节点滚动重启
+### 产出索引
+
+| 文件 | 内容摘要 |
+|------|---------|
+| [00_index.md](./ros2-ecosystem/security_research/00_index.md) | 威胁模型表、安全栈架构图、版本矩阵 |
+| [01_sros2.md](./ros2-ecosystem/security_research/01_sros2.md) | DDS-Security 五大插件、完整 sros2 CLI 工作流、AES-256 性能基准 |
+| [02_ota_update.md](./ros2-ecosystem/security_research/02_ota_update.md) | Docker 蓝绿部署、OSTree A/B、SWUpdate、ESP32 OTA、TUF 框架 |
+| [03_integration.md](./ros2-ecosystem/security_research/03_integration.md) | ChassisNode sros2 配置、分层安全架构、GitHub Actions OTA、决策矩阵 |
 
 ---
 
-## Phase 12 — 已有调研的"二期深化"专题集合
+## Phase 12 — 已有调研的"二期深化"专题集合 ✅
 
-按需挑选，不强制顺序。每项独立成小专题。
+**实际目录**：`docs/ros2-ecosystem/deepdive_research/`
+**优先级**：按需
 
-- [ ] **`rmw` 完整抽象层对比**：`rmw_fastrtps_cpp` vs `rmw_cyclonedds_cpp` vs `rmw_zenoh` 并排剖析
-- [ ] **QoS 调优手册**：相机 / 激光 / 控制环三类典型 topic 的 QoS profile + 失败案例库
-- [ ] **整机故障管理**：`lifecycle_node` + `diagnostic_aggregator` + BehaviorTree 的协同
-- [ ] **custom-fork 路线图执行篇**：挑 1-2 个最高 ROI 优化（如 IPC 零拷贝 + Executor）做实测 benchmark
-- [ ] **`arm_protocol` / `gripper_protocol`**：复用 `chassis_protocol` 的分层模式，沉淀"具身智能 HAL 框架"
+### 产出索引
+
+| 文件 | 内容摘要 |
+|------|---------|
+| [00_index.md](./ros2-ecosystem/deepdive_research/00_index.md) | 深化背景、开放问题汇总、导航表 |
+| [01_ros2_control_advanced.md](./ros2-ecosystem/deepdive_research/01_ros2_control_advanced.md) | ChainableController 三级链式、Ruckig 轨迹、GPIO Interface、Semantic Components、热重启 |
+| [02_nav2_advanced.md](./ros2-ecosystem/deepdive_research/02_nav2_advanced.md) | MPPI 系统调优、SmacPlannerLattice 运动学文件、collision_monitor、BT 自定义节点 |
+| [03_moveit2_advanced.md](./ros2-ecosystem/deepdive_research/03_moveit2_advanced.md) | bio_ik PSO、STOMP 随机优化、动态 ACM、Grasp Pose Detection、力控装配 |
+| [04_data_flywheel.md](./ros2-ecosystem/deepdive_research/04_data_flywheel.md) | 完整飞轮架构、在线质量筛选、EWC 持续学习、DVC+MLflow 版本管理 |
+| [05_summary.md](./ros2-ecosystem/deepdive_research/05_summary.md) | 12 Phase 核心发现汇总表、实施路线图（P0–P3）、10 个开放问题、参考索引 |
 
 ---
 
