@@ -17,7 +17,7 @@
 - [x] **Phase 5 — Nav2 架构调研**（已完成，提前执行）
 - [x] **Phase 6 — `rosbag2` 与模仿学习数据管线**（已完成）
 - [x] **Phase 7 — 实时性 / `PREEMPT_RT` / `iceoryx2`**（已完成）
-- [ ] **Phase 8 — micro-ROS 与分布式部署**
+- [x] **Phase 8 — micro-ROS 与分布式部署**（已完成）
 - [ ] **Phase 9 — 仿真栈：Isaac Sim / Gazebo Harmonic ↔ ROS 2 桥**
 - [ ] **Phase 10 — 多模态感知栈深化**
 - [ ] **Phase 11 — 安全（sros2 / DDS-Security）与 OTA**
@@ -241,14 +241,28 @@
 
 ## Phase 8 — micro-ROS 与分布式部署
 
-**目录建议**：`docs/ros2-ecosystem/micro_ros_research/`
+**目录**：`docs/ros2-ecosystem/microros_research/`
 **优先级**：⭐⭐⭐
+**状态**：✅ 已完成
 
 ### 子主题清单
-- [ ] micro-ROS 在 STM32 / ESP32 / Zephyr 上的运行模型
-- [ ] XRCE-DDS Agent / Client 协议
-- [ ] `ROS_DOMAIN_ID` / DDS Discovery Server 在多机/多容器/跨网段部署中的实践
-- [ ] **具身智能整机部署拓扑参考**：主控 SoC（Jetson/X86）+ 多 MCU 关节驱动 + 远端云端
+- [x] micro-ROS 在 STM32 / ESP32 / Zephyr 上的运行模型
+- [x] XRCE-DDS Agent / Client 协议
+- [x] `ROS_DOMAIN_ID` / DDS Discovery Server 在多机/多容器/跨网段部署中的实践
+- [x] **具身智能整机部署拓扑参考**：主控 SoC（Jetson/X86）+ 多 MCU 关节驱动 + 远端云端
+
+### 产出索引
+
+| 文件 | 内容 |
+|------|------|
+| [00_index.md](./ros2-ecosystem/microros_research/00_index.md) | 总览：分布式架构图、延迟资源预算表、chassis_protocol 关联速查、文档导航 |
+| [01_architecture.md](./ros2-ecosystem/microros_research/01_architecture.md) | micro-ROS 软件栈、rclc vs rclcpp API 对比、XRCE-DDS 协议、Agent 架构、RTOS/硬件对比 |
+| [02_transport_layer.md](./ros2-ecosystem/microros_research/02_transport_layer.md) | Serial/UDP/USB CDC/Custom Transport、分片处理、Discovery vs Static、可靠性模式 |
+| [03_rclc_programming.md](./ros2-ecosystem/microros_research/03_rclc_programming.md) | rclc Executor、Timer、Service、参数服务器、Lifecycle、内存策略、完整关节控制器示例 |
+| [04_ros2_control_integration.md](./ros2-ecosystem/microros_research/04_ros2_control_integration.md) | 分布式硬件接口架构、MicroRosSystemInterface 实现、延迟分析、同步策略、EtherCAT 混合 |
+| [05_distributed_deployment.md](./ros2-ecosystem/microros_research/05_distributed_deployment.md) | DDS Domain 隔离、Agent 容器化、多机器人 namespace、边缘-云协同、时间同步 |
+| [06_firmware_build.md](./ros2-ecosystem/microros_research/06_firmware_build.md) | micro_ros_setup 构建、自定义消息集成、OTA 固件更新、GitHub Actions CI、版本矩阵 |
+| [07_integration.md](./ros2-ecosystem/microros_research/07_integration.md) | chassis_protocol 迁移评估矩阵（方案A/B对比）、Phase 7 RT 对接、Phase 6 录制对接、整体架构图、选型决策矩阵 |
 
 ---
 
