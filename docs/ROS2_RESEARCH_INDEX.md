@@ -4,19 +4,32 @@
 
 | 目录 | 主题 | 文档数 | 核心内容 |
 |------|------|--------|---------|
-| [ros2_component_research](./ros2_component_research/) | Component 机制 | 5 | rclcpp_components、动态加载、ComponentContainer |
-| [ros2_service_discovery_research](./ros2_service_discovery_research/) | 服务发现 | 5 | SPDP/SEDP、RTPS、参与者发现 |
-| [ros2_rcl_research](./ros2_rcl_research/) | rcl C 客户端库 | 6 | 底层 C API、wait_set、rcl_init |
-| [ros2_rclcpp_core_research](./ros2_rclcpp_core_research/) | rclcpp 核心 | 6 | Node/Publisher/Subscription/Executor |
-| [ros2_topic_communication_research](./ros2_topic_communication_research/) | Topic 通信链路（含 IPC / Loaned / RTPS / SHM 深度剖析） | 10 | publish→DDS→subscribe 完整路径、CDR 序列化、IntraProcess、Loaned Message、RTPS 线协议、SHM 传输 |
-| [ros2_qos_research](./ros2_qos_research/) | QoS 系统 | 5 | 策略详解、rclcpp→rmw→DDS 三层映射 |
-| [ros2_service_action_research](./ros2_service_action_research/) | Service/Action | 6 | 请求-响应配对、Action 5-topic 状态机 |
-| [ros2_tf2_research](./ros2_tf2_research/) | tf2 坐标变换 | 6 | BufferCore、LCA算法、时间插值 |
-| [ros2_parameter_system_research](./ros2_parameter_system_research/) | 参数系统 | 6 | 6个Service、动态回调、AsyncClient |
-| [ros2_launch_system_research](./ros2_launch_system_research/) | Launch 系统 | 6 | LaunchService、事件系统、Substitution |
-| [ros2_clock_time_research](./ros2_clock_time_research/) | Clock/Time | 6 | 仿真时间、Timer源码、Duration类型 |
-| [ros2_lifecycle_node_research](./ros2_lifecycle_node_research/) | Lifecycle Node | 4 | 状态机、5个回调、LifecyclePublisher |
-| [ros2_custom_fork_roadmap](./ros2_custom_fork_roadmap/) | **专题**：独立维护 ROS 2 定制版本 — 性能优化路线图 | 12 | 面向中间件/系统架构师的 6 阶段路线图、12 个优化维度、ROI 决策矩阵、基准方法论、长期维护策略 |
+| [ros2_component_research](./ros2-core/ros2_component_research/) | Component 机制 | 5 | rclcpp_components、动态加载、ComponentContainer |
+| [ros2_service_discovery_research](./ros2-core/ros2_service_discovery_research/) | 服务发现 | 5 | SPDP/SEDP、RTPS、参与者发现 |
+| [ros2_rcl_research](./ros2-core/ros2_rcl_research/) | rcl C 客户端库 | 6 | 底层 C API、wait_set、rcl_init |
+| [ros2_rclcpp_core_research](./ros2-core/ros2_rclcpp_core_research/) | rclcpp 核心 | 6 | Node/Publisher/Subscription/Executor |
+| [ros2_topic_communication_research](./ros2-core/ros2_topic_communication_research/) | Topic 通信链路（含 IPC / Loaned / RTPS / SHM 深度剖析） | 10 | publish→DDS→subscribe 完整路径、CDR 序列化、IntraProcess、Loaned Message、RTPS 线协议、SHM 传输 |
+| [ros2_qos_research](./ros2-core/ros2_qos_research/) | QoS 系统 | 5 | 策略详解、rclcpp→rmw→DDS 三层映射 |
+| [ros2_service_action_research](./ros2-core/ros2_service_action_research/) | Service/Action | 6 | 请求-响应配对、Action 5-topic 状态机 |
+| [ros2_tf2_research](./ros2-core/ros2_tf2_research/) | tf2 坐标变换 | 6 | BufferCore、LCA算法、时间插值 |
+| [ros2_parameter_system_research](./ros2-core/ros2_parameter_system_research/) | 参数系统 | 6 | 6个Service、动态回调、AsyncClient |
+| [ros2_launch_system_research](./ros2-core/ros2_launch_system_research/) | Launch 系统 | 6 | LaunchService、事件系统、Substitution |
+| [ros2_clock_time_research](./ros2-core/ros2_clock_time_research/) | Clock/Time | 6 | 仿真时间、Timer源码、Duration类型 |
+| [ros2_lifecycle_node_research](./ros2-core/ros2_lifecycle_node_research/) | Lifecycle Node | 4 | 状态机、5个回调、LifecyclePublisher |
+| [ros2_custom_fork_roadmap](./ros2-roadmaps/ros2_custom_fork_roadmap/) | **专题**：独立维护 ROS 2 定制版本 — 性能优化路线图 | 12 | 面向中间件/系统架构师的 6 阶段路线图、12 个优化维度、ROI 决策矩阵、基准方法论、长期维护策略 |
+| [ros2_control_research](./ros2-ecosystem/ros2_control_research/) | **Phase 1**：ros2_control 源码深度调研 | 11 | CM 实时循环、System/Actuator/Sensor HAL 抽象、ResourceManager 内存模型、ChainableController、JTC/DiffDrive 等控制器、pluginlib 加载、MoveIt2/Gazebo/Isaac 集成、决策矩阵、chassis_protocol 改造评估、整机拓扑建议 |
+| [isaac_ros_nitros_research](./ros2-ecosystem/isaac_ros_nitros_research/) | **Phase 2**：Isaac ROS / NITROS 源码调研 | 10 | NITROS 分层架构、REP-2007 TypeAdapter 源码、REP-2009 Type Negotiation 协商协议、NvSci/DMA-BUF 跨进程 GPU 零拷贝、NitrosImage/PointCloud/TensorList、DNN/vSLAM/Nvblox/AprilTag 包族、与 image_transport 关系、端到端时序、custom-fork D1~D12 逐项对照矩阵 |
+| [llm_vla_ros2_integration](./embodied-ai/llm_vla_ros2_integration/) | **Phase 3**：LLM / VLA 与 ROS 2 集成模式 | 9 | 四层任务分层架构（L4 LLM→L3 VLA→L2 BT→L1 Control）、OpenVLA/π0/RDT 动作格式对比与转换层设计、rai LLM Agent 工具调用模式、Foxglove+LLM 可观测性、Isaac Manipulator+GROOT 编排、本机TRT/远端gRPC/Triton 部署对比、rosbag2→LeRobot 数据飞轮、5 个开源方案横向对比矩阵 |
+| [nav2_research](./ros2-ecosystem/nav2_research/) | **Phase 5（提前）**：Nav2 架构调研 | 8 | 六大服务器 lifecycle 管理 + bond 机制、NavigateToPose 完整消息流、BT.CPP v4 内置节点全表 + 自定义节点开发、Costmap2D 双层架构 + StaticLayer/Inflation/Obstacle/Voxel/STVL 插件、NavFn/SmacPlanner2D/Hybrid/ThetaStar 规划器对比、DWB/MPPI/RPP 控制器对比 + Jetson 选型建议、AMCL vs SLAM Toolbox vs collision_monitor 定位方案、chassis_protocol 完整对接清单（QoS/TF/odom/cmd_vel 拓扑/改造检查表）|
+| [moveit2_research](./ros2-ecosystem/moveit2_research/) | **Phase 4**：MoveIt 2 架构调研 | 8 | move_group 架构图 + 完整规划执行消息流、Planner（OMPL算法/Pilz PTP+LIN+CIRC/STOMP）+ IK（KDL/TracIK/bio_ik 选型）+ Collision（FCL+Octomap）、MoveIt Servo 实时增量控制 + 奇异点处理 + 控制器切换、Hybrid Planning 动态重规划框架、planning_scene_monitor 锁争用优化、FollowJointTrajectory 对接 + 时间参数化（TOTG/Ruckig）、VLA→MoveIt 四种对接模式（Servo/JointJog/pose_goal/cartesian_path）+ VlaActionRouter、moveit_py 完整 API |
+| [rosbag2_research](./ros2-ecosystem/rosbag2_research/) | **Phase 6**：rosbag2 与模仿学习数据管线 | 8 | 数据飞轮采集→存储→回放→训练完整架构、rosbag2_cpp SequentialWriter/Reader 内部流程、MCAP Chunk/Index/Summary Section 格式详解 + O(1) seek 原理、SQLite3 WAL schema + 性能对比、zstd/lz4 压缩对比表、RecordOptions/PlayOptions 全参数说明、时钟模型（wall/sim）+ use_sim_time 对接、零拷贝路径分析 + 磁盘吞吐基线（~130MB/s 双相机场景）、多线程录制 + 丢帧检测、LeRobot HDF5 转换脚本（伪代码级）、OfflineSynchronizer + align_observations 实现、DataQualityChecker 数据质量检查、Foxglove Studio Layout JSON + foxglove_bridge 配置、PlotJuggler ROS 2 plugin + 具身智能调试布局、mcap CLI 全命令说明、chassis_protocol 录制清单 + QoS 对接、Phase 3 数据飞轮闭环补充、Phase 7 进程隔离建议、Phase 9 Isaac Sim 录制配置、选型决策矩阵 |
+| [realtime_research](./ros2-ecosystem/realtime_research/) | **Phase 7**：实时性 / PREEMPT_RT / iceoryx2 | 8 | 具身智能实时性需求矩阵（1kHz 关节 / 4kHz 力控 / < 1ms E-Stop）、完整 RT 栈架构图 + CPU 核分配、延迟预算分配表、PREEMPT_RT 补丁原理（spinlock→rtmutex / softirq 线程化 / hrtimer）+ Ubuntu 22.04/24.04 安装（ubuntu-pro / 手动编译）+ BIOS 调优 + cyclictest/hwlatdetect + Jetson Orin RT 内核、ROS 2 实时化（mlockall / CPU 隔离 / SCHED_FIFO / StaticSingleThreadedExecutor / realtime_tools / Loaned Messages / 完整 RT 节点模板）、iceoryx2 零拷贝 IPC（RouDi / 共享内存模型 / rmw_iceoryx / 性能数据 / WaitSet）、DDS 调优（RMW 四维对比 / CycloneDDS+FastDDS RT 配置 / QoS 实时参数 / 网络栈调优）、ros2_control 实时控制环深化（4kHz 力控 / ChainableController / hardware_interface RT 约束 / EtherCAT/RS485 实现）、延迟分析工具链（ros2_tracing+LTTng / cyclictest / perf+ftrace / 诊断决策树）、chassis_protocol RT 改造路线图（SPSCRingBuffer + epoll）+ 容器化 RT + 选型决策矩阵 |
+| [microros_research](./ros2-ecosystem/microros_research/) | **Phase 8**：micro-ROS 与分布式部署 | 8 | MCU→XRCE-DDS→Agent→ROS 2 完整分布式架构图（FreeRTOS/Zephyr + ESP32/STM32/nRF5340）、延迟与资源预算表、rclc vs rclcpp API 全对比、XRCE-DDS 协议原理（帧结构/流类型）、Serial/UDP/USB CDC/Custom Transport 深度指南（DMA 配置/分片处理）、rclc Executor+Timer+Service+参数服务器+Lifecycle 完整示例（关节控制器伪代码）、micro-ROS + ros2_control 分布式 SystemInterface（MicroRosSystemInterface 实现 + 延迟分析 + ZOH 同步）、DDS Domain 隔离 + domain_bridge + Agent Docker 部署 + 多机器人 namespace + 边缘-云协同 + 时间同步（PTP/chrony）、micro_ros_setup 构建流程 + 自定义消息 extra_packages + OTA（ESP32/STM32 DFU）+ GitHub Actions CI + QEMU 测试 + 版本兼容矩阵、chassis_protocol 迁移评估矩阵（方案A全面标准化 vs 方案B最小改造）+ Phase 7 RT 对接 + Phase 6 录制对接 + EtherCAT 混合架构 + 选型决策矩阵 |
+| [simulation_research](./ros2-ecosystem/simulation_research/) | **Phase 9**：仿真栈：Isaac Sim / Gazebo Harmonic ↔ ROS 2 桥 | 8 | Gazebo Harmonic 架构+ros_gz_bridge 消息映射、Isaac Sim omni.isaac.ros2_bridge+OmniGraph、/clock 仿真时钟+use_sim_time、Sim2Real 传感器噪声+Domain Randomization+mock_components、RGB-D/LiDAR/IMU/FT 传感器仿真（Allan Variance）、omni.replicator 合成数据管线+Isaac Lab 1024 并行环境、GazeboSystem plugin+ChassisHalMock+VLA 数据飞轮 ASCII 图+决策矩阵 |
+| [perception_research](./ros2-ecosystem/perception_research/) | **Phase 10**：多模态感知栈深化 | 6 | RT-DETR TRT 部署（<10ms）+YOLOv8+PointPillars 3D 检测+MoveIt 2 碰撞对象集成、FoundationPose 零样本 6D 位姿+DOPE 训练+AprilTag+easy_handeye2 手眼标定、nvblox TSDF/ESDF/Color 层架构+Nav2 costmap+Orin AGX 性能表、CLIP/SigLIP+Grounding DINO+SAM 2+LLM→感知→操作完整链、35ms 端到端延迟分析+NITROS 零拷贝节点表+RT CPU 12 核分配+任务选型矩阵 |
+| [security_research](./ros2-ecosystem/security_research/) | **Phase 11**：安全（sros2 / DDS-Security）与 OTA | 4 | DDS-Security 五大插件+完整 sros2 CLI 工作流+governance.xml+permissions.xml+选择性加密策略+AES-256 性能基准（Orin AGX +0.4ms）、Docker 蓝绿部署脚本+OSTree A/B+SWUpdate+ESP32 micro-ROS OTA+cosign keyless 签名+TUF Python 客户端+Mender artifact、ChassisNode sros2 证书步骤+分层安全架构图（L1-L5）+GitHub Actions CI/CD+OTA 决策矩阵（分阶段 P0-P3 实施建议） |
+| [deepdive_research](./ros2-ecosystem/deepdive_research/) | **Phase 12**：二期深化专题集合 | 6 | ChainableController 三级链式+Ruckig 实时轨迹+GPIO Interface 夹爪+Semantic Components+Controller 热重启、MPPI 系统调优指南+GPU 加速（batch_size=4096）+SmacPlannerLattice 运动学文件生成+collision_monitor+BT 自定义节点开发完整示例、bio_ik PSO+STOMP 随机优化+动态 ACM+GraspNet/moveit2_grasps+轴孔装配阻抗控制 BT、完整数据飞轮架构图+在线 SimHash 去重+EWC 持续学习+DVC 数据管线+MLflow 实验追踪+CI/CD 脚本、12 Phase 核心发现汇总表+P0-P3 实施路线图+10 个开放问题+版本矩阵+快速参考卡片 |
+| [slam_research](./ros2-ecosystem/slam_research/) | **Phase 13**：SLAM 栈调研（**S100 主控 / CUDA-free**）| 8 | S100（地瓜机器人 RDK，无 CUDA / BPU≠GPGPU / ARM Cortex-A）主控硬约束 + 整体架构图 + 三阶段演进、SLAM Toolbox 深度（Karto pose-graph + 3 个 ScanMatcher + `.posegraph` 文件结构 + 4 种节点模式 + 参数全表 + ARM 降级矩阵 + 推荐起步参数 + 8 类故障）、`robot_localization` EKF wheel+IMU 双源融合（15 维状态、`_config` 矩阵语义、协方差 1e6 屏蔽惯例、Madgwick 前置链、TF 唯一发布者）、CPU VIO/VSLAM 兜底（OpenVINS 首推 / ORB-SLAM3 / VINS-Fusion / RTAB-Map 横向对比 + 接 EKF 的 `differential: true` 关键 + 外参时间同步精度天花板）、RGB-D → STVL 全 CPU 路径（ComposableNode + VoxelGrid + Passthrough + 完整 yaml + 楼梯检测 + 为何禁用 nvblox）、Lifelong utility score + 动态物体三层防御 + 地图版本化与灾备 + 运行时监控、APE/RPE + `evo` 工具链 + 回归测试套件 + S100 vs Orin AGX 基线表、与 chassis_protocol 对接清单（现状核查 + 协方差 TODO + TF 唯一发布者）+ TogetheROS/hobot_* 衔接 + CPU 核分配 + 一键 launch + 实机调试 17 项 checklist |
 
 ---
 
@@ -111,14 +124,17 @@ ros2 lifecycle set /node activate
 
 ---
 
-## 待研究主题（P4 — 后续计划）
+## 待研究主题（Phase 2+ — 后续计划，见 plan.md）
 
 | 主题 | 涉及包 | 优先级 |
 |------|--------|--------|
-| rosbag2 录制/回放架构 | rosbag2, rosbag2_transport | P4 |
-| rosidl 消息生成系统 | rosidl_default_generators | P4 |
-| rclcpp 零拷贝 API | rclcpp LoanedMessage | P4 |
-| rmw 抽象层完整分析 | rmw, rmw_fastrtps | P4 |
-| ros2_control 架构 | controller_manager, hardware_interface | P4 |
-| MoveIt2 架构 | moveit_core, moveit_ros | P4 |
-| Nav2 架构 | nav2_core, nav2_bt_navigator | P4 |
+| Isaac ROS / NITROS（GPU 零拷贝 + Type Negotiation） | isaac_ros_nitros, rclcpp TypeAdapter | Phase 2 |
+| LLM / VLA 与 ROS 2 集成模式 | openVLA, ros2_llm, Triton | Phase 3 |
+| MoveIt 2 架构 | moveit_core, moveit_ros, MoveIt Servo | Phase 4 |
+| Nav2 架构 | nav2_core, nav2_bt_navigator, costmap_2d | Phase 5 |
+| rosbag2 与模仿学习数据管线 | rosbag2, mcap, rosbag2_transport | Phase 6 |
+| 实时性 / PREEMPT_RT / iceoryx2 | rmw_iceoryx, CycloneDDS, Zenoh | Phase 7 |
+| micro-ROS 与分布式部署 | micro_ros_agent, XRCE-DDS | Phase 8 |
+| 仿真栈 Isaac Sim / Gazebo Harmonic | ros_gz_bridge, omni.isaac.ros2_bridge | Phase 9 |
+| 多模态感知栈深化 | image_transport, message_filters, TensorRT | Phase 10 |
+| 安全（sros2 / DDS-Security）与 OTA | sros2, fastdds_security | Phase 11 |
