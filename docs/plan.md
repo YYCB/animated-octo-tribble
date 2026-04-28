@@ -22,6 +22,7 @@
 - [x] **Phase 10 — 多模态感知栈深化**（已完成）
 - [x] **Phase 11 — 安全（sros2 / DDS-Security）与 OTA**（已完成）
 - [x] **Phase 12 — 已有调研的"二期深化"专题集合**（已完成）
+- [x] **Phase 13 — SLAM 栈调研（S100 主控 / CUDA-free）**（已完成）
 
 ---
 
@@ -335,6 +336,48 @@
 | [03_moveit2_advanced.md](./ros2-ecosystem/deepdive_research/03_moveit2_advanced.md) | bio_ik PSO、STOMP 随机优化、动态 ACM、Grasp Pose Detection、力控装配 |
 | [04_data_flywheel.md](./ros2-ecosystem/deepdive_research/04_data_flywheel.md) | 完整飞轮架构、在线质量筛选、EWC 持续学习、DVC+MLflow 版本管理 |
 | [05_summary.md](./ros2-ecosystem/deepdive_research/05_summary.md) | 12 Phase 核心发现汇总表、实施路线图（P0–P3）、10 个开放问题、参考索引 |
+
+---
+
+## Phase 13 — SLAM 栈调研（S100 主控 / CUDA-free）✅
+
+**实际目录**：`docs/ros2-ecosystem/slam_research/`
+**优先级**：⭐⭐⭐⭐⭐（与硬件平台直接绑定）
+**触发**：硬件平台从 Orin AGX 切换到地瓜机器人 RDK S100 作为主控；S100 无 CUDA / 无 NVIDIA GPU，原 `perception_research/` 中 nvblox 等 GPU 路径不可用，需要为 2D LiDAR + IMU + RGB-D 室内移动机器人搭建一套**纯 CPU / ARM 友好**的 SLAM 栈。
+
+### 调研目标
+- 在 S100 主控（无 CUDA）约束下，给出 SLAM / 定位 / 局部 3D 感知的完整选型
+- 解决"SLAM Toolbox 何时漂、为何漂、如何调"的工程问题
+- 把 wheel + IMU 双源融合、2D LiDAR 退化兜底、RGB-D 接 costmap 三件事讲透
+- 与已有 `chassis_protocol` HAL 无缝衔接（`/odom` + 协方差 + TF 唯一发布者）
+
+### 子主题清单
+- [x] SLAM Toolbox 内部数据结构（pose graph、ScanMatcher、Ceres 后端）+ 三种模式切换 + 参数全表 + ARM 性能预算
+- [x] `robot_localization` EKF/UKF 选型 + `_config` 矩阵语义 + 协方差填法（含 1e6 屏蔽惯例）+ Madgwick 前置链
+- [x] CPU 视觉 SLAM/VIO 横向对比（OpenVINS / VINS-Fusion / ORB-SLAM3 / RTAB-Map）+ 作为 EKF 第二输入的接入方式
+- [x] RGB-D depth → STVL 的全 CPU 路径（同进程 ComposableNode + VoxelGrid + Passthrough）+ 为何不用 nvblox
+- [x] Lifelong / 动态环境 / 地图持久化 / 版本管理 / 灾备
+- [x] APE / RPE / `evo` 工具链 + 回归测试套件 + S100 vs Orin 性能基线方法学
+- [x] 与 `chassis_protocol` 对接清单（QoS / TF / 协方差 / TODO）+ S100 主控整机拓扑 + TogetheROS hobot_* 衔接 + launch 骨架 + 实机调试 checklist
+
+### 产出索引
+
+| 文件 | 内容摘要 |
+|------|---------|
+| [00_index.md](./ros2-ecosystem/slam_research/00_index.md) | 总索引、S100 主控硬约束（无 CUDA / BPU≠GPGPU / ARM）、整体架构图、三阶段演进路线、与已有调研的衔接、明确边界 |
+| [01_slam_toolbox_deep_dive.md](./ros2-ecosystem/slam_research/01_slam_toolbox_deep_dive.md) | Karto pose-graph 流程、3 个 ScanMatcher 实例、`.posegraph + .data` 文件结构、4 种节点对应模式、参数全表、ARM 降级矩阵、推荐起步参数、典型故障 8 类 |
+| [02_odom_fusion_with_robot_localization.md](./ros2-ecosystem/slam_research/02_odom_fusion_with_robot_localization.md) | EKF vs UKF 选型、15 维状态向量、`_config` 矩阵双源典型配置、协方差填法（1e6 屏蔽惯例）、`imu_filter_madgwick` 前置链、TF 唯一发布者原则、与 chassis_protocol 对接清单 |
+| [03_visual_slam_cpu_backends.md](./ros2-ecosystem/slam_research/03_visual_slam_cpu_backends.md) | 4 种 CPU VIO/VSLAM 横向对比表、OpenVINS（首推，最轻）参数、ORB-SLAM3 角色边界、RTAB-Map 备选定位、外参/时间同步天花板、决策树、launch 接入 EKF 的 `differential: true` 关键 |
+| [04_3d_perception_for_2d_nav.md](./ros2-ecosystem/slam_research/04_3d_perception_for_2d_nav.md) | RGB-D depth → cloud → 降采样 → passthrough → STVL 全 CPU 链路、ComposableNode 同进程组合、STVL vs VoxelLayer 对比、完整配置 yaml、调参矩阵、楼梯/坠落检测、为何禁用 nvblox |
+| [05_dynamic_and_lifelong.md](./ros2-ecosystem/slam_research/05_dynamic_and_lifelong.md) | 三种地图演化策略、Lifelong utility score 算法、动态物体三层防御、地图版本化目录布局、灾备回滚、运行时监控指标 |
+| [06_evaluation_and_benchmarking.md](./ros2-ecosystem/slam_research/06_evaluation_and_benchmarking.md) | APE/RPE 定义、`evo` 工具链命令、Gazebo Harmonic 做 GT、回归测试套件目录、S100 vs Orin AGX 基线对照表、参数误调对比示例、签字交付 checklist |
+| [07_chassis_and_s100_integration.md](./ros2-ecosystem/slam_research/07_chassis_and_s100_integration.md) | 整机拓扑图、节点/话题/TF 总账、chassis_protocol 现状核查 + 协方差 TODO、TogetheROS / hobot_* 衔接、CPU 核分配表、内存预算、一键 launch 骨架、首次实机调试 17 项 checklist |
+
+### 验收
+- [x] 所有产出文档完成且互相交叉引用
+- [x] 全栈选型均为 **CPU-only / CUDA-free**，与 S100 硬件约束一致
+- [x] chassis_protocol 现状已核查（`chassis_node.cpp:24-30, 76-77, 149-152`），不发 TF + 透传协方差 = 与本方案兼容；明确 HAL 协方差默认值 TODO
+- [x] 更新 `ROS2_RESEARCH_INDEX.md` 与本文件 ✅
 
 ---
 
