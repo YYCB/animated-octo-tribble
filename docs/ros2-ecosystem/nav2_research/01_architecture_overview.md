@@ -169,7 +169,7 @@ controller_server 内部维护 **local_costmap**：
 ```yaml
 controller_server:
   ros__parameters:
-    controller_frequency: 20.0         # Hz
+    controller_frequency: 20.0         # Hz（S100 CPU-only 平台不建议提高；下发 50 Hz 通过 nav2_velocity_smoother 解耦，参见 07 §5.2）
     # 目标到达检测
     goal_checker_plugins: ["general_goal_checker"]
     general_goal_checker:

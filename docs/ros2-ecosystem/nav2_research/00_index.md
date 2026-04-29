@@ -87,7 +87,7 @@ planner_server  controller_server  behavior_server  smoother_server  waypoint_fo
 | [04_planner_plugins.md](./04_planner_plugins.md) | NavFn / SmacPlanner（A*/Hybrid-A*/State-Lattice）/ ThetaStar 对比 |
 | [05_controller_plugins.md](./05_controller_plugins.md) | DWB / MPPI / RPP 原理与参数对比、高速 / 精准 / 受限空间场景选型 |
 | [06_localization.md](./06_localization.md) | AMCL vs SLAM Toolbox、nav2_map_server、nav2_collision_monitor |
-| [07_chassis_protocol_integration.md](./07_chassis_protocol_integration.md) | 与 chassis_protocol 的完整对接清单（QoS / TF / odom / cmd_vel 拓扑）|
+| [07_chassis_protocol_integration.md](./07_chassis_protocol_integration.md) | 与 chassis_protocol 的完整对接清单（QoS / TF / odom / cmd_vel 拓扑 / **velocity_smoother 频率解耦 20→50 Hz**）|
 
 ---
 

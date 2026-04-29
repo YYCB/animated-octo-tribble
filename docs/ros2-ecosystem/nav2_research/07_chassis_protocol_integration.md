@@ -10,12 +10,14 @@
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
 │  Nav2 栈                                                                │
-│  controller_server → /cmd_vel_smoothed (collision_monitor 之后)         │
+│  controller_server (20 Hz) → /cmd_vel                                   │
+│      → velocity_smoother (50 Hz) → /cmd_vel_smoothed                    │
+│      → collision_monitor → /cmd_vel_chassis                             │
 │  planner_server ← /map + global_costmap                                │
 │  bt_navigator ← TF: map → odom → base_link                             │
 │  amcl/slam_toolbox ← /scan (LaserScan)                                 │
 └─────────────────────────────────────────────────────────────────────────┘
-        ↕ /cmd_vel（发）        ↕ /odom（收）        ↕ TF（收）
+        ↕ /cmd_vel_chassis（发）  ↕ /odom（收）        ↕ TF（收）
 ┌─────────────────────────────────────────────────────────────────────────┐
 │  chassis_protocol → ros2_control 接口                                   │
 │  DiffDriveController                                                    │
@@ -239,7 +241,7 @@ ekf_filter_node:
 
 ```
 上层来源（任选其一激活）：
-  Nav2 bt_navigator → controller_server → /cmd_vel
+  Nav2 bt_navigator → controller_server → /cmd_vel        （20 Hz，受 controller_frequency 约束）
   遥控器 → teleop_twist_joy → /teleop/cmd_vel
   LLM Agent（rai）→ navigate_to Action → Nav2 → /cmd_vel
   手动调试 → ros2 topic pub /cmd_vel ...
@@ -247,20 +249,28 @@ ekf_filter_node:
   ↓ twist_mux（命令优先级仲裁，按优先级合并多源 cmd_vel）
      配置：teleop（最高）> e_stop（停止）> nav2 > default（最低）
   ↓
-  /cmd_vel（仲裁后唯一命令）
+  /cmd_vel（仲裁后唯一命令，仍是 20 Hz）
+  ↓
+  nav2_velocity_smoother（频率解耦 + 加速度限幅，输入 20 Hz / 输出 50 Hz）
+  ↓
+  /cmd_vel_smoothed（50 Hz）
   ↓
   nav2_collision_monitor（最后一道安全检查，可以降速/停止）
   ↓
-  /cmd_vel_smoothed
+  /cmd_vel_chassis（送往底盘的最终命令）
   ↓
-  DiffDriveController（/velocity_controller/cmd_vel，topic_remapping）
+  DiffDriveController（topic_remapping 到 /velocity_controller/cmd_vel）
   ↓
-  ros2_control StateInterface/CommandInterface
+  ros2_control StateInterface/CommandInterface（update_rate 100 Hz）
   ↓
   chassis_protocol SystemInterface（write/read）
   ↓
   底盘驱动器（RS485/UDP）
 ```
+
+> **关键约束**：在 S100（D-Robotics RDK，ARM + BPU，CPU-only）平台上，DWB/MPPI 单次评估代价较重，
+> `controller_frequency` 不应超过 20 Hz，否则会出现 `control loop missed its desired rate` 警告。
+> 因此**规划/控制频率（20 Hz）与下发频率（50 Hz）必须解耦**——这正是 §5.2 引入 `velocity_smoother` 的原因。
 
 ### 5.1 twist_mux 配置
 
@@ -283,6 +293,87 @@ twist_mux:
       priority: 255
 ```
 
+### 5.2 nav2_velocity_smoother 配置（频率解耦：20 Hz → 50 Hz）
+
+#### 5.2.1 为什么需要
+
+Nav2 `controller_server` 按 `controller_frequency` 周期性调用控制器插件（DWB / MPPI / RPP）算一次速度
+并发布 `/cmd_vel`，**默认 20 Hz**。下游（chassis_protocol → DiffDriveController → 底盘）若需要 50 Hz
+的命令流（topic 层面或底盘协议帧率要求），不应通过简单提高 `controller_frequency` 来实现：
+
+- S100 ARM + BPU（CPU-only）单次 DWB/MPPI 评估代价较重，50 Hz 大概率跑不满，会出现
+  `control loop missed its desired rate` 警告，反而引发抖动；
+- 控制器频率提高，local_costmap 更新、TF 查询都要跟着提速，整体算力吃紧；
+- 用 Python relay 节点把 20 Hz 复制重发成 50 Hz 没有加速度限幅，遇到突变指令会冲击底盘；
+- 在 `chassis_protocol` 帧编解码层做插值违反 HAL 分层（参见 `chassis_protocol/docs/design/01_architecture.md`），
+  HAL 层应保持无状态写入。
+
+#### 5.2.2 推荐做法：nav2_velocity_smoother
+
+`nav2_velocity_smoother` 以自己的 `smoothing_frequency` 重新发布 cmd_vel，并在两次 Nav2 输出之间
+按加速度/加加速度（jerk）限幅做插值，**输入 20 Hz、输出 50 Hz**，且更平滑。
+
+```yaml
+velocity_smoother:
+  ros__parameters:
+    smoothing_frequency: 50.0       # ← 输出 50 Hz（与底盘期望频率对齐）
+    feedback: "OPEN_LOOP"           # 或 CLOSED_LOOP（用 odom 反馈实际速度）
+    odom_topic: /odom
+    odom_duration: 0.1              # s，odom 数据有效窗口
+    # 速度/加速度限幅（与 ros2_control DiffDriveController 限幅保持一致）
+    max_velocity:      [0.5, 0.0, 1.5]    # [vx, vy, wz]，差速底盘 vy=0
+    min_velocity:     [-0.5, 0.0, -1.5]
+    max_accel:         [1.0, 0.0, 2.0]
+    max_decel:        [-1.5, 0.0, -2.5]
+    deadband_velocity: [0.0, 0.0, 0.0]
+    velocity_timeout: 1.0           # s，超过此时间无新 cmd_vel 则归零
+    # Topic 重映射：输入接 twist_mux 输出，输出接 collision_monitor 输入
+    # 一般在 launch 中通过 remappings 完成：
+    #   ('cmd_vel',          'cmd_vel'         )  ← 来自 twist_mux
+    #   ('cmd_vel_smoothed', 'cmd_vel_smoothed')  ← 送往 collision_monitor
+```
+
+#### 5.2.3 与 collision_monitor 的串联
+
+```yaml
+collision_monitor:
+  ros__parameters:
+    base_frame_id: base_footprint
+    odom_frame_id: odom
+    cmd_vel_in_topic: cmd_vel_smoothed   # ← 接 velocity_smoother 输出
+    cmd_vel_out_topic: cmd_vel_chassis   # ← 送给 DiffDriveController
+    # ... polygons / sources 配置略
+```
+
+#### 5.2.4 决策建议（方案选型）
+
+| 真实约束 | 推荐方案 |
+|---------|---------|
+| ROS topic 层面要求 50 Hz（下游订阅者按 topic 频率工作）| **方案 A**：加 `nav2_velocity_smoother`，`smoothing_frequency: 50.0`（本节） |
+| 仅关心电机速度环刷新 50/100 Hz | **方案 B**：调高 `ros2_control` `update_rate`，`cmd_vel` 留 20 Hz；`DiffDriveController` 内部以 `update_rate` 持续把最近一次 cmd_vel 写到底盘，直到 `cmd_vel_timeout` |
+| 物理底盘协议要求 ≥ 50 Hz 心跳/速度帧（否则触发看门狗）| 在 `chassis_protocol` 的 `IChassisController` 层做"保持最后值并以固定频率周期性发送"，与 `ros2_control` `update_rate` 对齐（HAL 的合理职责）|
+
+> 绝大多数情况选 **方案 A**：规划 20 Hz 不动，下发 50 Hz，平滑性也更好。
+> 方案 B 与方案 A 不互斥，可同时使用（见 §5.2.5）。
+
+#### 5.2.5 方案 B 的 ros2_control 端配置参考
+
+```yaml
+controller_manager:
+  ros__parameters:
+    update_rate: 100              # ros2_control 主循环 100 Hz
+
+diff_drive_controller:
+  ros__parameters:
+    publish_rate: 50              # /odom 与 odom→base_link TF 发布频率
+    cmd_vel_timeout: 0.5          # 超过此时间无新 cmd_vel 则归零
+    # 限幅应与 velocity_smoother 一致，避免双重限幅互相打架
+    linear.x.max_velocity: 0.5
+    linear.x.max_acceleration: 1.0
+    angular.z.max_velocity: 1.5
+    angular.z.max_acceleration: 2.0
+```
+
 ---
 
 ## 六、chassis_protocol 改造对接检查表
@@ -296,7 +387,8 @@ twist_mux:
 | `/cmd_vel` 订阅 QoS 与 Nav2 兼容 | 需修复 | DiffDriveController BEST_EFFORT → RELIABLE |
 | 激光雷达发布 `/scan` 并有正确 `frame_id` | 需验证 | `laser_frame` 需在 TF 树中 |
 | 静态 TF：`base_link → laser_frame` 已配置 | 需添加 | 在 bringup launch 中添加 |
-| `nav2_collision_monitor` cmd_vel 链路配置 | 需添加 | `cmd_vel_out` → `cmd_vel_smoothed` |
+| `nav2_velocity_smoother` 配置（频率解耦 20 → 50 Hz）| 需添加 | `smoothing_frequency: 50.0`，参见 §5.2 |
+| `nav2_collision_monitor` cmd_vel 链路配置 | 需添加 | `cmd_vel_in_topic: cmd_vel_smoothed`，`cmd_vel_out_topic: cmd_vel_chassis` |
 | E-Stop 与 ros2_control lifecycle `deactivate` 联动 | 需实现 | 参见 Phase 1 / Phase 3 安全层 |
 
 ---
